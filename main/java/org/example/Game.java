@@ -2,29 +2,28 @@ package org.example;
 
 import org.example.logic.Sonic;
 import org.example.logic.Enemy;
-import org.example.logic.Rings;
+import org.example.logic.Lives;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class Game {
     public static void main(String[] args) {
+        Lives lives = new Lives(3);
         Enemy enemy = new Enemy(500, 200, 20, 20, 300, 300);
-        Rings rings = new Rings();
-        Sonic sonic = new Sonic(50, 203, enemy, rings);
-
-        GameLogic gameLogic = new GameLogic(sonic, enemy);
+        Sonic sonic = new Sonic(50, 203, 20, 20, lives);
 
         JFrame frame = new JFrame("Project Sonic");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1920, 1080);
+        frame.setSize(800, 600);
         frame.setLocationRelativeTo(null);
-        GameGraphics gameGraphics = new GameGraphics(sonic, enemy, rings);
+        GameGraphics gameGraphics = new GameGraphics(sonic, enemy, lives);
         frame.add(gameGraphics);
         frame.setVisible(true);
 
         Timer timer = new Timer(25, e -> {
-            gameLogic.update();
+            sonic.update();
+            enemy.update(sonic);
             gameGraphics.repaint();
         });
         timer.start();
@@ -38,6 +37,9 @@ public class Game {
                     case java.awt.event.KeyEvent.VK_LEFT:
                         sonic.moveLeft(true);
                         break;
+                    case java.awt.event.KeyEvent.VK_SPACE:
+                        sonic.jump();
+                        break;
                 }
             }
 
@@ -49,12 +51,6 @@ public class Game {
                     case java.awt.event.KeyEvent.VK_LEFT:
                         sonic.moveLeft(false);
                         break;
-                }
-            }
-
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                if (evt.getKeyChar() == ' ') {
-                    sonic.jump();
                 }
             }
         });

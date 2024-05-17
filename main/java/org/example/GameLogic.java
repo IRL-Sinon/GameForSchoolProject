@@ -2,54 +2,30 @@ package org.example;
 
 import org.example.logic.Sonic;
 import org.example.logic.Enemy;
-import org.example.logic.Rings;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import org.example.logic.Lives;
 
 public class GameLogic {
     private Sonic sonic;
     private Enemy enemy;
-    private Rings rings;
+    private Lives lives;
+    private GameTimer gameTimer;
 
-    public GameLogic(Sonic sonic, Enemy enemy) {
+    public GameLogic(Sonic sonic, Enemy enemy, Lives lives, GameTimer gameTimer) {
         this.sonic = sonic;
         this.enemy = enemy;
-        this.rings = new Rings();
+        this.lives = lives;
+        this.gameTimer = gameTimer;
     }
 
     public void update() {
         sonic.update();
-        for (Enemy enemy : Enemy.getActiveEnemies()) {
-            enemy.update(sonic);
-        }
+        enemy.update(sonic);
 
-        if (!sonic.isAlive()) {
-            return;
-        }
-
-        for (Enemy enemy : Enemy.getActiveEnemies()) {
-            if (enemy.checkCollision(sonic)) {
-                if (sonic.isInBallForm() && sonic.isJumping()) {
-                    enemy.die();
-                } else if (!sonic.isInBallForm()) {
-                    sonic.die();
-                }
-                sonic.loseRings();
+        if (enemy.checkCollision(sonic)) {
+            sonic.takeDamage();
+            if (!sonic.isAlive()) {
+                // Game over logic here
             }
         }
-    }
-
-    public void collectRing() {
-        rings.add(1);
-    }
-
-    public int getRingCount() {
-        return rings.getCount();
-    }
-
-    public Rings getRings() {
-        return rings;
     }
 }

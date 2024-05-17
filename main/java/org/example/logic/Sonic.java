@@ -6,6 +6,9 @@ public class Sonic extends Entity {
     private boolean jumping;
     private boolean canJump;
     private boolean inBallForm;
+    private boolean immortal;
+    private int immortalTime;
+    private int immortalDuration;
     private double jumpStrength;
     private double gravity;
     private double jumpStep;
@@ -13,24 +16,23 @@ public class Sonic extends Entity {
     private double deceleration;
     private double maxSpeed;
     private double currentSpeed;
-    private boolean alive;
-    private Enemy enemy;
-    private Rings rings;
+    private Lives lives;
 
-    public Sonic(int x, int y, Enemy enemy, Rings rings) {
-        super(x, y, 20, 20);
+    public Sonic(int x, int y, int width, int height, Lives lives) {
+        super(x, y, width, height);
         this.jumpStrength = 15;
         this.gravity = 2;
         this.jumpStep = 0;
-        this.acceleration = 0.1;
+        this.acceleration = 0.5;
         this.deceleration = 0.1;
         this.maxSpeed = 10;
         this.currentSpeed = 0;
-        this.alive = true;
-        this.enemy = enemy;
-        this.rings = rings; // Přidáme proměnnou rings
+        this.lives = lives;
         this.inBallForm = false;
         this.canJump = true;
+        this.immortal = false;
+        this.immortalTime = 0;
+        this.immortalDuration = 100;
     }
 
     public void moveRight(boolean move) {
@@ -52,7 +54,15 @@ public class Sonic extends Entity {
     }
 
     public void update() {
-        if (!alive) return;
+        if (!isAlive()) return;
+
+        if (immortal) {
+            immortalTime++;
+            if (immortalTime > immortalDuration) {
+                immortal = false;
+                immortalTime = 0;
+            }
+        }
 
         if (movingRight) {
             currentSpeed += acceleration;
@@ -63,20 +73,23 @@ public class Sonic extends Entity {
             currentSpeed = Math.max(currentSpeed, -maxSpeed);
         }
 
-        if (!movingLeft && !movingRight && currentSpeed != 0) {
-            currentSpeed += (currentSpeed > 0) ? -deceleration : deceleration;
-            if (Math.abs(currentSpeed) < deceleration) {
-                currentSpeed = 0;
+        if (!movingLeft && !movingRight) {
+            if (currentSpeed > 0) {
+                currentSpeed -= deceleration;
+                currentSpeed = Math.max(currentSpeed, 0);
+            } else if (currentSpeed < 0) {
+                currentSpeed += deceleration;
+                currentSpeed = Math.min(currentSpeed, 0);
             }
         }
 
-        coord.x += currentSpeed;
+        getCoord().x += currentSpeed;
 
         if (jumping) {
-            coord.y -= jumpStep;
+            getCoord().y -= jumpStep;
             jumpStep -= gravity;
-            if (coord.y >= 200) {
-                coord.y = 200;
+            if (getCoord().y >= 200) {
+                getCoord().y = 200;
                 jumping = false;
                 inBallForm = false;
                 width = 20;
@@ -84,47 +97,34 @@ public class Sonic extends Entity {
                 canJump = true;
             }
         } else {
-            if (coord.y < 200) {
-                coord.y += gravity;
+            if (getCoord().y < 200) {
+                getCoord().y += gravity;
             } else {
                 canJump = true;
             }
         }
+    }
 
-        if (enemy != null && enemy.isAlive() && checkCollision(enemy)) {
-            if (inBallForm) {
-                enemy.die();
-            } else {
-                die();
+    public void takeDamage() {
+        if (isInBallForm()) {
+            inBallForm = false;
+        } else {
+            if (!immortal) {
+                lives.loseLife();
+                if (lives.getLives() <= 0) {
+                    alive = false;
+                } else {
+                    immortal = true;
+                }
             }
         }
-
-
-        if (rings.getCount() > 0) {
-            rings.loseRings();
-        }
-    }
-
-    public boolean isJumping() {
-        return jumping;
-    }
-
-    public boolean checkCollision(Enemy other) {
-        return coord.x + width >= other.coord.x &&
-                coord.x <= other.coord.x + other.width &&
-                coord.y + height >= other.coord.y &&
-                coord.y <= other.coord.y + other.height;
-    }
-
-    public void die() {
-        alive = false;
-    }
-
-    public boolean isAlive() {
-        return alive;
     }
 
     public boolean isInBallForm() {
         return inBallForm;
+    }
+
+    public boolean isImmortal() {
+        return immortal;
     }
 }

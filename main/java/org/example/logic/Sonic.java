@@ -1,5 +1,7 @@
 package org.example.logic;
 
+import java.util.List;
+
 public class Sonic extends Entity {
     private boolean movingRight;
     private boolean movingLeft;
@@ -17,10 +19,15 @@ public class Sonic extends Entity {
     private double maxSpeed;
     private double currentSpeed;
     private Lives lives;
+    private boolean beingKnockedBack;
+    private int knockBackSpeed;
+    private int knockBackDuration;
+    private int knockBackTime;
+    private int knockBackDirection;
 
     public Sonic(int x, int y, int width, int height, Lives lives) {
         super(x, y, width, height);
-        this.jumpStrength = 15;
+        this.jumpStrength = 19;
         this.gravity = 2;
         this.jumpStep = 0;
         this.acceleration = 0.5;
@@ -33,6 +40,11 @@ public class Sonic extends Entity {
         this.immortal = false;
         this.immortalTime = 0;
         this.immortalDuration = 100;
+        this.beingKnockedBack = false;
+        this.knockBackSpeed = 5;
+        this.knockBackDuration = 20;
+        this.knockBackTime = 0;
+        this.knockBackDirection = 0;
     }
 
     public void moveRight(boolean move) {
@@ -48,12 +60,12 @@ public class Sonic extends Entity {
             jumping = true;
             jumpStep = jumpStrength;
             inBallForm = true;
-            width = 10;
-            height = 10;
+            width = 20;
+            height = 20;
         }
     }
 
-    public void update() {
+    public void update(List<Enemy> enemies) {
         if (!isAlive()) return;
 
         if (immortal) {
@@ -62,6 +74,17 @@ public class Sonic extends Entity {
                 immortal = false;
                 immortalTime = 0;
             }
+        }
+
+        if (beingKnockedBack) {
+            knockBackTime++;
+            getCoord().setX(getCoord().getX() + knockBackDirection * knockBackSpeed);
+            if (knockBackTime > knockBackDuration) {
+                beingKnockedBack = false;
+                knockBackTime = 0;
+                currentSpeed = 0;
+            }
+            return;
         }
 
         if (movingRight) {
@@ -83,13 +106,13 @@ public class Sonic extends Entity {
             }
         }
 
-        getCoord().x += currentSpeed;
+        getCoord().setX(getCoord().getX() + (int) currentSpeed);
 
         if (jumping) {
-            getCoord().y -= jumpStep;
+            getCoord().setY(getCoord().getY() - (int) jumpStep);
             jumpStep -= gravity;
-            if (getCoord().y >= 200) {
-                getCoord().y = 200;
+            if (getCoord().getY() >= 200) {
+                getCoord().setY(200);
                 jumping = false;
                 inBallForm = false;
                 width = 20;
@@ -97,27 +120,53 @@ public class Sonic extends Entity {
                 canJump = true;
             }
         } else {
-            if (getCoord().y < 200) {
-                getCoord().y += gravity;
+            if (getCoord().getY() < 200) {
+                getCoord().setY(getCoord().getY() + (int) gravity);
             } else {
                 canJump = true;
             }
         }
-    }
 
-    public void takeDamage() {
-        if (isInBallForm()) {
-            inBallForm = false;
-        } else {
-            if (!immortal) {
-                lives.loseLife();
-                if (lives.getLives() <= 0) {
-                    alive = false;
-                } else {
-                    immortal = true;
+
+        for (Enemy enemy : enemies) {
+            if (checkCollision(enemy)) {
+                if (isInBallForm() && getCoord().getY() + getHeight() <= enemy.getCoord().getY() + enemy.getHeight()) {
+                    enemy.die();
+
+                    jumping = true;
+                    jumpStep = jumpStrength;
+                } else if (!isInBallForm() && enemy.isAlive()) {
+                    int knockBackDirection = getCoord().getX() > enemy.getCoord().getX() ? 1 : -1;
+                    takeDamage(knockBackDirection);
                 }
             }
         }
+    }
+
+    public void takeDamage(int knockBackDirection) {
+        if (isInBallForm()) {
+            return;
+        }
+
+        if (!immortal) {
+            lives.loseLife();
+            immortal = true;
+            if (lives.getLives() <= 0) {
+                alive = false;
+            } else {
+                beingKnockedBack = true;
+                this.knockBackDirection = knockBackDirection;
+            }
+        }
+    }
+
+    public boolean checkCollision(Enemy enemy) {
+        if (!isAlive()) return false;
+
+        return getCoord().getX() + getWidth() >= enemy.getCoord().getX() &&
+                getCoord().getX() <= enemy.getCoord().getX() + enemy.getWidth() &&
+                getCoord().getY() + getHeight() >= enemy.getCoord().getY() &&
+                getCoord().getY() <= enemy.getCoord().getY() + enemy.getHeight();
     }
 
     public boolean isInBallForm() {
@@ -126,5 +175,12 @@ public class Sonic extends Entity {
 
     public boolean isImmortal() {
         return immortal;
+    }
+
+    public boolean isVisible() {
+        if (immortal) {
+            return (immortalTime / 10) % 2 == 0;
+        }
+        return true;
     }
 }

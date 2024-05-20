@@ -6,28 +6,66 @@ import org.example.logic.Lives;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Iterator;
+import java.util.List;
 
 class GameGraphics extends JPanel {
     private Sonic sonic;
-    private Enemy enemy;
+    private List<Enemy> enemies;
     private Lives lives;
+    private Timer timer;
 
-    public GameGraphics(Sonic sonic, Enemy enemy, Lives lives) {
+    public GameGraphics(Sonic sonic, List<Enemy> enemies, Lives lives) {
         this.sonic = sonic;
-        this.enemy = enemy;
+        this.enemies = enemies;
         this.lives = lives;
+    }
+
+    public JFrame initializeFrame() {
+        JFrame frame = new JFrame("Project Sonic");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1920, 1080);
+        frame.setLocationRelativeTo(null);
+        frame.add(this);
+        frame.setVisible(true);
+        return frame;
+    }
+
+    public void startGame() {
+        timer = new Timer(25, e -> {
+            if (sonic.isAlive()) {
+
+                sonic.update(enemies);
+
+
+                Iterator<Enemy> iterator = enemies.iterator();
+                while (iterator.hasNext()) {
+                    Enemy enemy = iterator.next();
+                    if (enemy.isAlive()) {
+                        enemy.update(sonic);
+                    } else {
+                        iterator.remove();
+                    }
+                }
+            }
+            repaint();
+        });
+        timer.start();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (sonic.isAlive()) {
+        if (sonic.isAlive() && sonic.isVisible()) {
             g.setColor(Color.BLUE);
             g.fillRect(sonic.getCoord().getX(), sonic.getCoord().getY(), sonic.getWidth(), sonic.getHeight());
         }
-        if (enemy.isAlive()) {
-            g.setColor(Color.RED);
-            g.fillRect(enemy.getCoord().getX(), enemy.getCoord().getY(), enemy.getWidth(), enemy.getHeight());
+
+        for (Enemy enemy : enemies) {
+            if (enemy.isAlive()) {
+                g.setColor(Color.RED);
+                g.fillRect(enemy.getCoord().getX(), enemy.getCoord().getY(), enemy.getWidth(), enemy.getHeight());
+            }
         }
 
         g.setColor(Color.BLACK);

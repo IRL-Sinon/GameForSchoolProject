@@ -4,35 +4,34 @@ public class Enemy extends Entity {
     private int speed;
     private int detectionRangeX;
     private int detectionRangeY;
-    private boolean alive;
-    private boolean active;
 
     public Enemy(int x, int y, int width, int height, int detectionRangeX, int detectionRangeY) {
         super(x, y, width, height);
         this.speed = 3;
         this.detectionRangeX = detectionRangeX;
         this.detectionRangeY = detectionRangeY;
-        this.alive = true;
-        this.active = true;
     }
 
     public void update(Sonic sonic) {
         if (!alive) return;
 
-        int distanceX = Math.abs(sonic.getCoord().x - coord.x);
-        int distanceY = Math.abs(sonic.getCoord().y - coord.y);
+        int distanceX = Math.abs(sonic.getCoord().getX() - coord.getX());
+        int distanceY = Math.abs(sonic.getCoord().getY() - coord.getY());
 
         if (distanceX <= detectionRangeX && distanceY <= detectionRangeY) {
-            if (sonic.getCoord().x > coord.x) {
-                coord.x += speed;
-            } else if (sonic.getCoord().x < coord.x) {
-                coord.x -= speed;
+            if (sonic.getCoord().getX() > coord.getX()) {
+                coord.setX(coord.getX() + speed);
+            } else if (sonic.getCoord().getX() < coord.getX()) {
+                coord.setX(coord.getX() - speed);
             }
         }
 
         if (checkCollision(sonic)) {
-            if (sonic.isInBallForm()) {
+            if (sonic.isInBallForm() && sonic.getCoord().getY() + sonic.getHeight() <= coord.getY() + height) {
                 die();
+            } else if (!sonic.isInBallForm()) {
+                int knockBackDirection = sonic.getCoord().getX() > coord.getX() ? 1 : -1;
+                sonic.takeDamage(knockBackDirection);
             }
         }
     }
@@ -40,14 +39,17 @@ public class Enemy extends Entity {
     public boolean checkCollision(Sonic sonic) {
         if (!alive) return false;
 
-        return sonic.getCoord().x + sonic.getWidth() >= coord.x &&
-                sonic.getCoord().x <= coord.x + width &&
-                sonic.getCoord().y + sonic.getHeight() >= coord.y &&
-                sonic.getCoord().y <= coord.y + height;
+        return sonic.getCoord().getX() + sonic.getWidth() >= coord.getX() &&
+                sonic.getCoord().getX() <= coord.getX() + width &&
+                sonic.getCoord().getY() + sonic.getHeight() >= coord.getY() &&
+                sonic.getCoord().getY() <= coord.getY() + height;
     }
 
     public void die() {
         alive = false;
-        active = false;
+    }
+
+    public boolean isAlive() {
+        return alive;
     }
 }

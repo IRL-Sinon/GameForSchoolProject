@@ -1,6 +1,7 @@
 package org.example.logic;
 
-import java.util.List;
+import javax.swing.ImageIcon;
+import java.net.URL;
 
 public class Sonic extends Entity {
     private boolean movingRight;
@@ -25,9 +26,15 @@ public class Sonic extends Entity {
     private int knockBackTime;
     private int knockBackDirection;
 
+    private ImageIcon idleGif;
+    private ImageIcon walkingGif;
+    private ImageIcon slowRunGif;
+    private ImageIcon fullSpeedGif;
+    private ImageIcon ballGif;
+
     public Sonic(int x, int y, int width, int height, Lives lives) {
         super(x, y, width, height);
-        this.jumpStrength = 19;
+        this.jumpStrength = 15;
         this.gravity = 2;
         this.jumpStep = 0;
         this.acceleration = 0.5;
@@ -45,6 +52,23 @@ public class Sonic extends Entity {
         this.knockBackDuration = 20;
         this.knockBackTime = 0;
         this.knockBackDirection = 0;
+
+        this.idleGif = loadGif("src/main/resources/sonicIdle.gif");
+        this.walkingGif = loadGif("src/main/resources/sonicWalking.gif");
+        this.slowRunGif = loadGif("src/main/resources/sonicSlowRun.gif");
+        this.fullSpeedGif = loadGif("src/main/resources/sonicRun.gif");
+        this.ballGif = loadGif("src/main/resources/ball.gif");
+    }
+
+    private ImageIcon loadGif(String path) {
+        URL imgURL = getClass().getClassLoader().getResource(path);
+        if (imgURL != null) {
+            System.out.println("Loaded: " + imgURL);
+            return new ImageIcon(imgURL);
+        } else {
+            System.err.println("Couldn't find file: " + path);
+            return new ImageIcon(new byte[0]);
+        }
     }
 
     public void moveRight(boolean move) {
@@ -60,12 +84,12 @@ public class Sonic extends Entity {
             jumping = true;
             jumpStep = jumpStrength;
             inBallForm = true;
-            width = 20;
-            height = 20;
+            width = 10;
+            height = 10;
         }
     }
 
-    public void update(List<Enemy> enemies) {
+    public void update(java.util.List<Enemy> enemies) {
         if (!isAlive()) return;
 
         if (immortal) {
@@ -127,7 +151,7 @@ public class Sonic extends Entity {
             }
         }
 
-
+        // Check collision with the enemies
         for (Enemy enemy : enemies) {
             if (checkCollision(enemy)) {
                 if (isInBallForm() && getCoord().getY() + getHeight() <= enemy.getCoord().getY() + enemy.getHeight()) {
@@ -182,5 +206,19 @@ public class Sonic extends Entity {
             return (immortalTime / 10) % 2 == 0;
         }
         return true;
+    }
+
+    public ImageIcon getCurrentGif() {
+        if (isInBallForm()) {
+            return ballGif;
+        } else if (currentSpeed >= 7) {
+            return fullSpeedGif;
+        } else if (currentSpeed >= 3) {
+            return slowRunGif;
+        } else if (currentSpeed >= 1) {
+            return walkingGif;
+        } else {
+            return idleGif;
+        }
     }
 }

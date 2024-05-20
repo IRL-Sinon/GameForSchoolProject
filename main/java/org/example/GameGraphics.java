@@ -34,10 +34,10 @@ class GameGraphics extends JPanel {
     public void startGame() {
         timer = new Timer(25, e -> {
             if (sonic.isAlive()) {
-
+                // Update Sonic's position and handle collisions
                 sonic.update(enemies);
 
-
+                // Update enemies and remove any that are dead
                 Iterator<Enemy> iterator = enemies.iterator();
                 while (iterator.hasNext()) {
                     Enemy enemy = iterator.next();
@@ -57,8 +57,12 @@ class GameGraphics extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (sonic.isAlive() && sonic.isVisible()) {
-            g.setColor(Color.BLUE);
-            g.fillRect(sonic.getCoord().getX(), sonic.getCoord().getY(), sonic.getWidth(), sonic.getHeight());
+            ImageIcon currentGif = sonic.getCurrentGif();
+            if (currentGif != null) {
+                g.drawImage(currentGif.getImage(), sonic.getCoord().getX(), sonic.getCoord().getY(), this);
+            } else {
+                System.err.println("Current GIF is null");
+            }
         }
 
         for (Enemy enemy : enemies) {

@@ -8,24 +8,28 @@ import java.util.List;
 
 public class GameLogic {
     private Sonic sonic;
-    private Enemy enemy;
+    private List<Enemy> enemies;
     private Lives lives;
 
-
-    public GameLogic(Sonic sonic, Enemy enemy, Lives lives) {
+    public GameLogic(Sonic sonic, List<Enemy> enemies, Lives lives) {
         this.sonic = sonic;
-        this.enemy = enemy;
+        this.enemies = enemies;
         this.lives = lives;
     }
 
     public void update() {
-        sonic.update((List<Enemy>) enemy);
-        enemy.update(sonic);
+        sonic.update(enemies);
+        for (Enemy enemy : enemies) {
+            enemy.update(sonic);
+        }
 
-        if (enemy.checkCollision(sonic)) {
-            int knockBackDirection = sonic.getCoord().getX() > enemy.getCoord().getX() ? 1 : -1;
-            sonic.takeDamage(knockBackDirection);
-            if (!sonic.isAlive()) {
+        for (Enemy enemy : enemies) {
+            if (enemy.checkCollision(sonic)) {
+                int knockBackDirection = sonic.getCoord().getX() > enemy.getCoord().getX() ? 1 : -1;
+                sonic.takeDamage(knockBackDirection);
+                if (!sonic.isAlive()) {
+
+                }
             }
         }
     }

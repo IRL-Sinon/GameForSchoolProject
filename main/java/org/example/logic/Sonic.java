@@ -1,7 +1,9 @@
 package org.example.logic;
 
 import javax.swing.ImageIcon;
+import java.awt.Image;
 import java.net.URL;
+import java.util.List;
 
 public class Sonic extends Entity {
     private boolean movingRight;
@@ -26,20 +28,25 @@ public class Sonic extends Entity {
     private int knockBackTime;
     private int knockBackDirection;
 
+    private boolean facingRight = true;
+
     private ImageIcon idleGif;
     private ImageIcon walkingGif;
     private ImageIcon slowRunGif;
     private ImageIcon fullSpeedGif;
     private ImageIcon ballGif;
 
+    private int gifWidth = 50;
+    private int gifHeight = 50;
+
     public Sonic(int x, int y, int width, int height, Lives lives) {
         super(x, y, width, height);
         this.jumpStrength = 15;
         this.gravity = 2;
         this.jumpStep = 0;
-        this.acceleration = 0.5;
+        this.acceleration = 0.2;
         this.deceleration = 0.1;
-        this.maxSpeed = 10;
+        this.maxSpeed = 15;
         this.currentSpeed = 0;
         this.lives = lives;
         this.inBallForm = false;
@@ -53,18 +60,19 @@ public class Sonic extends Entity {
         this.knockBackTime = 0;
         this.knockBackDirection = 0;
 
-        this.idleGif = loadGif("src/main/resources/sonicIdle.gif");
-        this.walkingGif = loadGif("src/main/resources/sonicWalking.gif");
-        this.slowRunGif = loadGif("src/main/resources/sonicSlowRun.gif");
-        this.fullSpeedGif = loadGif("src/main/resources/sonicRun.gif");
-        this.ballGif = loadGif("src/main/resources/ball.gif");
+        this.idleGif = loadAndResizeGif("sonicIdle.gif");
+        this.walkingGif = loadAndResizeGif("sonicWalking.gif");
+        this.slowRunGif = loadAndResizeGif("sonicSlowRun.gif");
+        this.fullSpeedGif = loadAndResizeGif("sonicRun.gif");
+        this.ballGif = loadAndResizeGif("ball.gif");
     }
 
-    private ImageIcon loadGif(String path) {
+    private ImageIcon loadAndResizeGif(String path) {
         URL imgURL = getClass().getClassLoader().getResource(path);
         if (imgURL != null) {
-            System.out.println("Loaded: " + imgURL);
-            return new ImageIcon(imgURL);
+            ImageIcon originalGif = new ImageIcon(imgURL);
+            Image image = originalGif.getImage().getScaledInstance(gifWidth, gifHeight, Image.SCALE_DEFAULT);
+            return new ImageIcon(image);
         } else {
             System.err.println("Couldn't find file: " + path);
             return new ImageIcon(new byte[0]);
@@ -84,12 +92,12 @@ public class Sonic extends Entity {
             jumping = true;
             jumpStep = jumpStrength;
             inBallForm = true;
-            width = 10;
-            height = 10;
+            width = 20;
+            height = 20;
         }
     }
 
-    public void update(java.util.List<Enemy> enemies) {
+    public void update(List<Enemy> enemies) {
         if (!isAlive()) return;
 
         if (immortal) {
@@ -114,10 +122,16 @@ public class Sonic extends Entity {
         if (movingRight) {
             currentSpeed += acceleration;
             currentSpeed = Math.min(currentSpeed, maxSpeed);
+            if (currentSpeed > 0) {
+                facingRight = true;
+            }
         }
         if (movingLeft) {
             currentSpeed -= acceleration;
             currentSpeed = Math.max(currentSpeed, -maxSpeed);
+            if (currentSpeed < 0) {
+                facingRight = false;
+            }
         }
 
         if (!movingLeft && !movingRight) {
@@ -151,7 +165,6 @@ public class Sonic extends Entity {
             }
         }
 
-        // Check collision with the enemies
         for (Enemy enemy : enemies) {
             if (checkCollision(enemy)) {
                 if (isInBallForm() && getCoord().getY() + getHeight() <= enemy.getCoord().getY() + enemy.getHeight()) {
@@ -165,6 +178,32 @@ public class Sonic extends Entity {
                 }
             }
         }
+    }
+
+    public ImageIcon getCurrentGif() {
+        if (isInBallForm()) {
+            return ballGif;
+        } else if (Math.abs(currentSpeed) >= 10) {
+            return fullSpeedGif;
+        } else if (Math.abs(currentSpeed) >= 6) {
+            return slowRunGif;
+        } else if (Math.abs(currentSpeed) >= 1) {
+            return walkingGif;
+        } else {
+            return idleGif;
+        }
+    }
+
+    public boolean isFacingRight() {
+        return facingRight;
+    }
+
+    public double getCurrentSpeed() {
+        return currentSpeed;
+    }
+
+    public void resetIdleGif() {
+        this.idleGif = loadAndResizeGif("sonicIdle.gif");
     }
 
     public void takeDamage(int knockBackDirection) {
@@ -184,13 +223,13 @@ public class Sonic extends Entity {
         }
     }
 
-    public boolean checkCollision(Enemy enemy) {
+    public boolean checkCollision(Entity entity) {
         if (!isAlive()) return false;
 
-        return getCoord().getX() + getWidth() >= enemy.getCoord().getX() &&
-                getCoord().getX() <= enemy.getCoord().getX() + enemy.getWidth() &&
-                getCoord().getY() + getHeight() >= enemy.getCoord().getY() &&
-                getCoord().getY() <= enemy.getCoord().getY() + enemy.getHeight();
+        return getCoord().getX() + getWidth() >= entity.getCoord().getX() &&
+                getCoord().getX() <= entity.getCoord().getX() + entity.getWidth() &&
+                getCoord().getY() + getHeight() >= entity.getCoord().getY() &&
+                getCoord().getY() <= entity.getCoord().getY() + entity.getHeight();
     }
 
     public boolean isInBallForm() {
@@ -206,19 +245,5 @@ public class Sonic extends Entity {
             return (immortalTime / 10) % 2 == 0;
         }
         return true;
-    }
-
-    public ImageIcon getCurrentGif() {
-        if (isInBallForm()) {
-            return ballGif;
-        } else if (currentSpeed >= 7) {
-            return fullSpeedGif;
-        } else if (currentSpeed >= 3) {
-            return slowRunGif;
-        } else if (currentSpeed >= 1) {
-            return walkingGif;
-        } else {
-            return idleGif;
-        }
     }
 }

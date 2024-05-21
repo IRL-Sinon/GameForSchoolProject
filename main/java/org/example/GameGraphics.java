@@ -27,13 +27,10 @@ class GameGraphics extends JPanel {
         this.lives = lives;
         this.camera = new Camera(1920, 1080);
     }
-
     public JFrame initializeFrame() {
         JFrame frame = new JFrame("Project Sonic");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setLocationRelativeTo(null);
-        frame.setSize(800,500);
         frame.setUndecorated(false);
         ImageIcon icon = new ImageIcon("src/main/resources/sonic icon.png");
         frame.setIconImage(icon.getImage());
@@ -76,6 +73,9 @@ class GameGraphics extends JPanel {
         int offsetX = camera.getX();
         int offsetY = camera.getY();
 
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
         if (sonic.isAlive() && sonic.isVisible()) {
             ImageIcon currentGif = sonic.getCurrentGif();
             if (currentGif != null) {
@@ -85,10 +85,10 @@ class GameGraphics extends JPanel {
                 if (!sonic.isFacingRight() && Math.abs(sonic.getCurrentSpeed()) > 0) {
                     AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
                     tx.translate(-image.getWidth(null), 0);
-                    AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+                    AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
                     image = op.filter(toBufferedImage(image), null);
                 }
-                g.drawImage(image, drawX, drawY, this);
+                g2d.drawImage(image, drawX, drawY, this);
             } else {
                 System.err.println("Current GIF is null");
             }

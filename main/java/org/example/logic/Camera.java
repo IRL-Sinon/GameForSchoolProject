@@ -1,10 +1,12 @@
 package org.example.logic;
 
+import java.awt.geom.Arc2D;
+
 public class Camera {
     private int x;
     private int y;
-    private int screenWidth;
-    private int screenHeight;
+    private double screenWidth;
+    private double screenHeight;
 
     public Camera(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth / 2;
@@ -14,8 +16,8 @@ public class Camera {
     }
 
     public void update(Sonic sonic) {
-        x = sonic.getCoord().getX() - screenWidth / 2;
-        y = sonic.getCoord().getY() - screenHeight / 2;
+        x = (int) (sonic.getCoord().getX() - screenWidth / 1.5);
+        y = (int) (sonic.getCoord().getY() - screenHeight / 1.5);
     }
 
     public int getX() {

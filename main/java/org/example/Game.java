@@ -12,8 +12,8 @@ public class Game {
     public static void main(String[] args) {
         Lives lives = new Lives(3);
         List<Enemy> enemies = new ArrayList<>();
-        enemies.add(new Enemy(500, 200, 20, 20, 300, 300));
-        Sonic sonic = new Sonic(50, 203, 10, 10, lives);
+        enemies.add(new Enemy(700, 200, 40, 40, 500, 500));
+        Sonic sonic = new Sonic(50, 200, 40, 40, lives);
 
         GameGraphics gameGraphics = new GameGraphics(sonic, enemies, lives);
         JFrame frame = gameGraphics.initializeFrame();

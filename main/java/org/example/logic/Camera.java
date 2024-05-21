@@ -1,7 +1,5 @@
 package org.example.logic;
 
-import java.awt.geom.Arc2D;
-
 public class Camera {
     private int x;
     private int y;

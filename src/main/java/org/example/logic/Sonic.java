@@ -27,6 +27,7 @@ public class Sonic extends Entity {
     private double deceleration;
     private double maxSpeed;
     private double currentSpeed;
+    private double fastDeceleration;
 
     // Knockback properties
     private boolean beingKnockedBack;
@@ -54,9 +55,10 @@ public class Sonic extends Entity {
     // Constructor
     public Sonic(int x, int y, int width, int height, Lives lives) {
         super(x, y, width, height);
-        this.jumpStrength = 25;
+        this.jumpStrength = 15;
         this.acceleration = 0.2;
         this.deceleration = 0.1;
+        this.fastDeceleration = 0.5;
         this.maxSpeed = 15;
         this.currentSpeed = 0;
         this.lives = lives;
@@ -134,14 +136,19 @@ public class Sonic extends Entity {
             return;
         }
 
-        if (movingRight) {
+        if (movingRight && currentSpeed < 0) {
+            currentSpeed += fastDeceleration;
+        } else if (movingRight) {
             currentSpeed += acceleration;
             currentSpeed = Math.min(currentSpeed, maxSpeed);
             if (currentSpeed > 0) {
                 facingRight = true;
             }
         }
-        if (movingLeft) {
+
+        if (movingLeft && currentSpeed > 0) {
+            currentSpeed -= fastDeceleration;
+        } else if (movingLeft) {
             currentSpeed -= acceleration;
             currentSpeed = Math.max(currentSpeed, -maxSpeed);
             if (currentSpeed < 0) {
@@ -164,7 +171,6 @@ public class Sonic extends Entity {
         // Apply gravity and vertical movement
         applyGravity();
 
-        // Check for collision with platforms
         boolean onPlatform = handlePlatformCollision(platforms);
 
         if (onPlatform) {

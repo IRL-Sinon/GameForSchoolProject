@@ -28,13 +28,13 @@ public class TestLevel {
 
         // Setup enemies
         enemies = new ArrayList<>();
-        enemies.add(new Enemy(500, 380, 20, 20, 300, 300));
-        enemies.add(new Enemy(750, 380, 20, 20, 300, 300));
-        enemies.add(new Enemy(1000, 330, 20, 20, 300, 300));
+        enemies.add(new Enemy(500, 200, 20, 20, 300, 300));
+        enemies.add(new Enemy(750, 200, 20, 20, 300, 300));
+        enemies.add(new Enemy(1000, 200, 20, 20, 300, 300));
 
         // Setup Sonic and lives
         lives = new Lives(3);
-        sonic = new Sonic(50, 380, 20, 20, lives);
+        sonic = new Sonic(50, 0, 10, 10, lives);
     }
 
     public List<Rectangle> getPlatforms() {

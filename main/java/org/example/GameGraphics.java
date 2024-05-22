@@ -11,7 +11,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.List;
-import java.util.Iterator;
+
 
 class GameGraphics extends JPanel {
     private Sonic sonic;
@@ -31,9 +31,9 @@ class GameGraphics extends JPanel {
         frame = new JFrame("Project Sonic");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setSize(800,600);
-        frame.setLocationRelativeTo(null);
         frame.setUndecorated(false);
+        frame.setLocationRelativeTo(null);
+        frame.setSize(800,600);
         ImageIcon icon = new ImageIcon("src/main/resources/sonic icon.png");
         frame.setIconImage(icon.getImage());
         frame.add(this);
@@ -83,7 +83,7 @@ class GameGraphics extends JPanel {
                 Image image = currentGif.getImage();
                 int drawX = sonic.getCoord().getX() - offsetX;
                 int drawY = sonic.getCoord().getY() - offsetY;
-                if (!sonic.isFacingRight() && Math.abs(sonic.getCurrentSpeed()) > 0) {
+                if (!sonic.isFacingRight()) {
                     AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
                     tx.translate(-image.getWidth(null), 0);
                     AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
@@ -97,10 +97,16 @@ class GameGraphics extends JPanel {
 
         for (Enemy enemy : enemies) {
             if (enemy.isAlive()) {
-                int drawX = enemy.getCoord().getX() - offsetX;
-                int drawY = enemy.getCoord().getY() - offsetY;
-                g2d.setColor(Color.RED);
-                g2d.fillRect(drawX, drawY, enemy.getWidth(), enemy.getHeight());
+                ImageIcon currentGif = enemy.getCurrentGif();
+                if (currentGif != null) {
+                    Image image = currentGif.getImage();
+                    int drawX = enemy.getCoord().getX() - offsetX;
+                    int drawY = enemy.getCoord().getY() - offsetY;
+                    g2d.drawImage(image, drawX, drawY, this);
+                } else {
+                    g2d.setColor(Color.RED);
+                    g2d.fillRect(enemy.getCoord().getX() - offsetX, enemy.getCoord().getY() - offsetY, enemy.getWidth(), enemy.getHeight());
+                }
             }
         }
 

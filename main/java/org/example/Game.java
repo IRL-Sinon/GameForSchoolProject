@@ -34,16 +34,20 @@ public class Game {
 
     private void startGame() {
         gameGraphics.getFrame().remove(menuPanel);
+
         lives = new Lives(3);
         sonic = new Sonic(50, 203, 10, 10, lives);
         enemies = new ArrayList<>();
         enemies.add(new Enemy(500, 200, 20, 20, 300, 300));
+
         gameGraphics.setupGameComponents(sonic, enemies, lives);
         gameLogic = new GameLogic(sonic, enemies);
         gameGraphics.getFrame().add(gameGraphics);
         gameGraphics.getFrame().revalidate();
         gameGraphics.getFrame().repaint();
+
         gameGraphics.startGameLoop(gameLogic);
+
         gameGraphics.getFrame().addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyPressed(java.awt.event.KeyEvent evt) {

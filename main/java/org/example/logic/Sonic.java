@@ -35,6 +35,7 @@ public class Sonic extends Entity {
     private ImageIcon slowRunGif;
     private ImageIcon fullSpeedGif;
     private ImageIcon ballGif;
+    private ImageIcon damageGif;
 
     private int gifWidth = 50;
     private int gifHeight = 50;
@@ -65,6 +66,7 @@ public class Sonic extends Entity {
         this.slowRunGif = loadAndResizeGif("sonicSlowRun.gif");
         this.fullSpeedGif = loadAndResizeGif("sonicRun.gif");
         this.ballGif = loadAndResizeGif("ball.gif");
+        this.damageGif = loadAndResizeGif("sonicDamage.gif");
     }
 
     private ImageIcon loadAndResizeGif(String path) {
@@ -181,17 +183,28 @@ public class Sonic extends Entity {
     }
 
     public ImageIcon getCurrentGif() {
-        if (isInBallForm()) {
-            return ballGif;
+        ImageIcon previousGif = idleGif;
+        ImageIcon currentGif;
+
+        if (beingKnockedBack) {
+            currentGif = damageGif;
+        } else if (isInBallForm()) {
+            currentGif = ballGif;
         } else if (Math.abs(currentSpeed) >= 10) {
-            return fullSpeedGif;
+            currentGif = fullSpeedGif;
         } else if (Math.abs(currentSpeed) >= 6) {
-            return slowRunGif;
+            currentGif = slowRunGif;
         } else if (Math.abs(currentSpeed) >= 1) {
-            return walkingGif;
+            currentGif = walkingGif;
         } else {
-            return idleGif;
+            currentGif = idleGif;
         }
+
+        if (previousGif != currentGif) {
+            resetIdleGif();
+        }
+
+        return currentGif;
     }
 
     public boolean isFacingRight() {

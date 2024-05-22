@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
+// Main menu panel with start and exit buttons
 public class Menu extends JPanel {
 
     // Constructor initializes the menu with start and exit buttons

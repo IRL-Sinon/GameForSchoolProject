@@ -1,6 +1,8 @@
+// Game class with main menu and level selector logic
 package org.example;
 
 import org.example.logic.Menu;
+import org.example.logic.LevelSelector;
 import org.example.logic.Sonic;
 import org.example.logic.Enemy;
 import org.example.logic.Lives;
@@ -13,6 +15,7 @@ public class Game {
     private GameGraphics gameGraphics; // Manages the graphical elements of the game
     private GameLogic gameLogic; // Manages the game logic and interactions
     private JPanel menuPanel; // Represents the menu panel in the game
+    private JPanel levelSelectorPanel; // Represents the level selector panel in the game
     private Lives lives; // Manages the number of lives Sonic has
     private Sonic sonic; // Represents the Sonic character
     private List<Enemy> enemies; // Stores a list of enemies in the game
@@ -29,15 +32,33 @@ public class Game {
 
     // Creates a new menu panel with start and exit buttons
     public void showMenu() {
-        menuPanel = new Menu(e -> startGame(), e -> exitGame());
-        gameGraphics.getFrame().add(menuPanel);
+        if (menuPanel == null) {
+            menuPanel = new Menu(e -> showLevelSelector(), e -> exitGame());
+            gameGraphics.getFrame().add(menuPanel);
+        }
+        menuPanel.setVisible(true);
+        if (levelSelectorPanel != null) {
+            levelSelectorPanel.setVisible(false);
+        }
         gameGraphics.getFrame().revalidate();
         gameGraphics.getFrame().repaint();
     }
 
-    // Starts the game
-    private void startGame() {
-        gameGraphics.getFrame().remove(menuPanel);
+    // Shows the level selector panel
+    private void showLevelSelector() {
+        if (levelSelectorPanel == null) {
+            levelSelectorPanel = new LevelSelector(e -> startTestLevel(), e -> showMenu());
+            gameGraphics.getFrame().add(levelSelectorPanel);
+        }
+        levelSelectorPanel.setVisible(true);
+        menuPanel.setVisible(false);
+        gameGraphics.getFrame().revalidate();
+        gameGraphics.getFrame().repaint();
+    }
+
+    // Starts the test level
+    private void startTestLevel() {
+        gameGraphics.getFrame().remove(levelSelectorPanel);
 
         // Initializes the lives, sonic, and enemies objects
         lives = new Lives(3);

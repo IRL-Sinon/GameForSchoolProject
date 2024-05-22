@@ -1,18 +1,13 @@
 package org.example.logic;
 
 public class Entity {
-    protected Coordinates coord;
-    protected int width;
-    protected int height;
-    protected boolean alive;
+    protected Coordinates coord; // Coordinates object to store the position of the entity
+    protected int width;         // Width of the entity
+    protected int height;        // Height of the entity
+    protected boolean alive;     // Status indicating if the entity is alive
 
-    public Entity(int x, int y) {
-        this.coord = new Coordinates(x, y);
-        this.width = 0;
-        this.height = 0;
-        this.alive = true;
-    }
 
+     //Constructor to initialize the entity at a specific position with given width and height.
     public Entity(int x, int y, int width, int height) {
         this.coord = new Coordinates(x, y);
         this.width = width;
@@ -20,18 +15,29 @@ public class Entity {
         this.alive = true;
     }
 
+
+    //Gets the coordinates of the entity and returns it.
+
     public Coordinates getCoord() {
         return coord;
     }
 
+
+     //Gets the width of the entity and returns it.
     public int getWidth() {
         return width;
     }
 
+
+    //Gets the height of the entity and returns it.
     public int getHeight() {
         return height;
     }
 
+    /**
+     * Checks if the entity is alive.
+     * true if the entity is alive, false otherwise.
+     */
     public boolean isAlive() {
         return alive;
     }

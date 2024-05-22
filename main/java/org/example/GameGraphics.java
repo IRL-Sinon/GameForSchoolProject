@@ -12,38 +12,41 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-
 class GameGraphics extends JPanel {
-    private Sonic sonic;
-    private List<Enemy> enemies;
-    private Lives lives;
-    private Timer timer;
-    private boolean wasIdle = true;
-    private Camera camera;
-    private Image backgroundImage;
-    private JFrame frame;
+    private Sonic sonic; // Represents the Sonic character
+    private List<Enemy> enemies; // Stores a list of enemies in the game
+    private Lives lives; // Manages the number of lives Sonic has
+    private Timer timer; // Timer for the game loop
+    private boolean wasIdle = true; // Tracks if Sonic was idle
+    private Camera camera; // Manages the camera view
+    private Image backgroundImage; // Background image of the game
+    private JFrame frame; // Main frame of the game window
 
+    // Constructor initializes the game frame
     public GameGraphics() {
         initializeFrame();
     }
 
+    // Initializes the game frame settings
     public void initializeFrame() {
         frame = new JFrame("Project Sonic");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setUndecorated(false);
         frame.setLocationRelativeTo(null);
-        frame.setSize(800,600);
+        frame.setSize(800, 600);
         ImageIcon icon = new ImageIcon("src/main/resources/sonic icon.png");
         frame.setIconImage(icon.getImage());
         frame.add(this);
         frame.setVisible(true);
     }
 
+    // Returns the main frame of the game
     public JFrame getFrame() {
         return frame;
     }
 
+    // Sets up the game components
     public void setupGameComponents(Sonic sonic, List<Enemy> enemies, Lives lives) {
         this.sonic = sonic;
         this.enemies = enemies;
@@ -51,8 +54,9 @@ class GameGraphics extends JPanel {
         this.camera = new Camera(1920, 1080);
     }
 
+    // Starts the game loop with a timer
     public void startGameLoop(GameLogic gameLogic) {
-        timer = new Timer(18, e -> {
+        timer = new Timer(2, e -> {
             gameLogic.update();
             if (camera != null) {
                 camera.update(sonic);
@@ -62,6 +66,7 @@ class GameGraphics extends JPanel {
         timer.start();
     }
 
+    // Paints the game components on the screen
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -73,10 +78,12 @@ class GameGraphics extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
+        // Draw the background image
         if (backgroundImage != null) {
             g2d.drawImage(backgroundImage, -offsetX, -offsetY, this);
         }
 
+        // Draw Sonic if he is alive and visible
         if (sonic.isAlive() && sonic.isVisible()) {
             ImageIcon currentGif = sonic.getCurrentGif();
             if (currentGif != null) {
@@ -95,6 +102,7 @@ class GameGraphics extends JPanel {
             }
         }
 
+        // Draw enemies if they are alive
         for (Enemy enemy : enemies) {
             if (enemy.isAlive()) {
                 ImageIcon currentGif = enemy.getCurrentGif();
@@ -110,11 +118,13 @@ class GameGraphics extends JPanel {
             }
         }
 
+        // Draw the number of lives Sonic has
         g2d.setColor(Color.BLACK);
         g2d.setFont(new Font("Arial", Font.BOLD, 16));
         g2d.drawString("Lives: " + lives.getLives(), 20, 50);
     }
 
+    // Converts an Image to a BufferedImage
     private BufferedImage toBufferedImage(Image img) {
         if (img instanceof BufferedImage) {
             return (BufferedImage) img;

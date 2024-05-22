@@ -23,10 +23,11 @@ public class Enemy extends Entity {
         this.detectionRangeX = detectionRangeX;
         this.detectionRangeY = detectionRangeY;
 
+        // Load GIFs for idle and walking animations with set path
         this.idleGif = loadAndResizeGif("enemyStanding.gif");
         this.walkingGif = loadAndResizeGif("enemyMoving.gif");
         this.moving = false;
-    }
+    }   // moving animation is setted to false so enemy starts in standing state
 
     private ImageIcon loadAndResizeGif(String path) {
         URL imgURL = getClass().getClassLoader().getResource(path);
@@ -40,14 +41,18 @@ public class Enemy extends Entity {
         }
     }
 
+
+     //Updates the enemy's state based on the position of the Sonic character.
     public void update(Sonic sonic) {
         if (!alive) return;
 
         int distanceX = Math.abs(sonic.getCoord().getX() - coord.getX());
         int distanceY = Math.abs(sonic.getCoord().getY() - coord.getY());
 
+        // Check if Sonic is within detection range
         if (distanceX <= detectionRangeX && distanceY <= detectionRangeY) {
             moving = true;
+            // Move towards Sonic
             if (sonic.getCoord().getX() > coord.getX()) {
                 coord.setX(coord.getX() + speed);
             } else if (sonic.getCoord().getX() < coord.getX()) {
@@ -57,20 +62,25 @@ public class Enemy extends Entity {
             moving = false;
         }
 
+        // Check for collision with Sonic
         if (checkCollision(sonic)) {
             if (sonic.isInBallForm() && sonic.getCoord().getY() + sonic.getHeight() <= coord.getY() + height) {
-                die();
+                die(); // Enemy dies if Sonic hits it while in ball form
             } else if (!sonic.isInBallForm()) {
                 int knockBackDirection = sonic.getCoord().getX() > coord.getX() ? 1 : -1;
-                sonic.takeDamage(knockBackDirection);
+                sonic.takeDamage(knockBackDirection); // Sonic takes damage if not in ball form
             }
         }
     }
 
+
+     // Returns the current GIF image to display based on the enemy's state.
     public ImageIcon getCurrentGif() {
         return moving ? walkingGif : idleGif;
     }
 
+
+     // Checks if there is a collision between the enemy and Sonic.
     public boolean checkCollision(Sonic sonic) {
         if (!alive) return false;
 
@@ -80,10 +90,14 @@ public class Enemy extends Entity {
                 sonic.getCoord().getY() <= coord.getY() + height;
     }
 
+
+     //Kills the enemy.
     public void die() {
         alive = false;
     }
 
+
+     //Checks if the enemy is still alive.
     public boolean isAlive() {
         return alive;
     }

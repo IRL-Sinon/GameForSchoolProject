@@ -6,14 +6,21 @@ import java.net.URL;
 import java.util.List;
 
 public class Sonic extends Entity {
+    // Movement and state flags
     private boolean movingRight;
     private boolean movingLeft;
     private boolean jumping;
     private boolean canJump;
     private boolean inBallForm;
     private boolean immortal;
+
+    // Timers and durations
     private int immortalTime;
     private int immortalDuration;
+    private int knockBackTime;
+    private int knockBackDuration;
+
+    // Movement parameters
     private double jumpStrength;
     private double gravity;
     private double jumpStep;
@@ -21,15 +28,19 @@ public class Sonic extends Entity {
     private double deceleration;
     private double maxSpeed;
     private double currentSpeed;
-    private Lives lives;
+
+    // Knockback properties
     private boolean beingKnockedBack;
     private int knockBackSpeed;
-    private int knockBackDuration;
-    private int knockBackTime;
     private int knockBackDirection;
 
+    // Direction the character is facing
     private boolean facingRight = true;
 
+    // Life management
+    private Lives lives;
+
+    // GIFs for animations
     private ImageIcon idleGif;
     private ImageIcon walkingGif;
     private ImageIcon slowRunGif;
@@ -37,9 +48,11 @@ public class Sonic extends Entity {
     private ImageIcon ballGif;
     private ImageIcon damageGif;
 
+    // Dimensions for GIFs
     private int gifWidth = 50;
     private int gifHeight = 50;
 
+    // Constructor
     public Sonic(int x, int y, int width, int height, Lives lives) {
         super(x, y, width, height);
         this.jumpStrength = 15;
@@ -61,6 +74,7 @@ public class Sonic extends Entity {
         this.knockBackTime = 0;
         this.knockBackDirection = 0;
 
+        // Load GIFs for different states
         this.idleGif = loadAndResizeGif("sonicIdle.gif");
         this.walkingGif = loadAndResizeGif("sonicWalking.gif");
         this.slowRunGif = loadAndResizeGif("sonicSlowRun.gif");
@@ -69,6 +83,7 @@ public class Sonic extends Entity {
         this.damageGif = loadAndResizeGif("sonicDamage.gif");
     }
 
+    // Loads and resizes GIFs from the specified path
     private ImageIcon loadAndResizeGif(String path) {
         URL imgURL = getClass().getClassLoader().getResource(path);
         if (imgURL != null) {
@@ -81,6 +96,7 @@ public class Sonic extends Entity {
         }
     }
 
+    // Methods to control movement direction
     public void moveRight(boolean move) {
         movingRight = move;
     }
@@ -89,6 +105,7 @@ public class Sonic extends Entity {
         movingLeft = move;
     }
 
+    // Method to handle jumping
     public void jump() {
         if (canJump && !jumping) {
             jumping = true;
@@ -99,6 +116,7 @@ public class Sonic extends Entity {
         }
     }
 
+    // Updates Sonic's state and interacts with enemies
     public void update(List<Enemy> enemies) {
         if (!isAlive()) return;
 
@@ -182,6 +200,7 @@ public class Sonic extends Entity {
         }
     }
 
+    // Returns the current GIF based on Sonic's state
     public ImageIcon getCurrentGif() {
         ImageIcon previousGif = idleGif;
         ImageIcon currentGif;
@@ -207,18 +226,22 @@ public class Sonic extends Entity {
         return currentGif;
     }
 
+    // Check which direction Sonic is facing
     public boolean isFacingRight() {
         return facingRight;
     }
 
+    // Gets the current speed of Sonic
     public double getCurrentSpeed() {
         return currentSpeed;
     }
 
+    // Resets the idle GIF to the original state
     public void resetIdleGif() {
         this.idleGif = loadAndResizeGif("sonicIdle.gif");
     }
 
+    // Handles the damage and knockback when Sonic takes a hit
     public void takeDamage(int knockBackDirection) {
         if (isInBallForm()) {
             return;
@@ -236,6 +259,7 @@ public class Sonic extends Entity {
         }
     }
 
+    // Checks for collision with another entity
     public boolean checkCollision(Entity entity) {
         if (!isAlive()) return false;
 
@@ -245,14 +269,17 @@ public class Sonic extends Entity {
                 getCoord().getY() <= entity.getCoord().getY() + entity.getHeight();
     }
 
+    // Checks if Sonic is in ball form
     public boolean isInBallForm() {
         return inBallForm;
     }
 
+    // Checks if Sonic is in an immortal state
     public boolean isImmortal() {
         return immortal;
     }
 
+    // Determines if Sonic is visible (blinks when immortal)
     public boolean isVisible() {
         if (immortal) {
             return (immortalTime / 10) % 2 == 0;

@@ -27,7 +27,7 @@ public class GameLogic {
             for (Iterator<Enemy> iterator = enemies.iterator(); iterator.hasNext();) {
                 Enemy enemy = iterator.next();
                 if (enemy.isAlive()) {
-                    enemy.update(sonic, gameGraphics.getPlatforms());
+                    enemy.update(sonic, enemies, gameGraphics.getPlatforms());
                 } else {
                     iterator.remove(); // Remove dead enemy from the list
                 }

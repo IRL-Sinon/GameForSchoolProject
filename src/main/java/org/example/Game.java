@@ -1,13 +1,9 @@
 package org.example;
 
-import org.example.logic.Menu;
-import org.example.logic.LevelSelector;
-import org.example.logic.Sonic;
-import org.example.logic.Enemy;
-import org.example.logic.Lives;
+import org.example.logic.*;
+import org.example.levels.TestLevel;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
@@ -15,9 +11,6 @@ public class Game {
     private GameLogic gameLogic; // Manages the game logic and interactions
     private JPanel menuPanel; // Represents the menu panel in the game
     private JPanel levelSelectorPanel; // Represents the level selector panel in the game
-    private Lives lives; // Manages the number of lives Sonic has
-    private Sonic sonic; // Represents the Sonic character
-    private List<Enemy> enemies; // Stores a list of enemies in the game
 
     // Starts the game and calls the showMenu method on the Event Dispatch Thread
     public static void main(String[] args) {
@@ -59,15 +52,12 @@ public class Game {
     private void startTestLevel() {
         gameGraphics.getFrame().remove(levelSelectorPanel);
 
-        // Initializes the lives, sonic, and enemies objects
-        lives = new Lives(3);
-        sonic = new Sonic(50, 0, 10, 10, lives);
-        enemies = new ArrayList<>();
-        enemies.add(new Enemy(500, 200, 20, 20, 300, 300));
+        // Setup the test level
+        TestLevel testLevel = new TestLevel();
 
         // Sets up the game components in the gameGraphics object
-        gameGraphics.setupGameComponents(sonic, enemies, lives);
-        gameLogic = new GameLogic(sonic, enemies, gameGraphics);
+        gameGraphics.setupGameComponents(testLevel.getSonic(), testLevel.getEnemies(), testLevel.getLives(), testLevel.getPlatforms());
+        gameLogic = new GameLogic(testLevel.getSonic(), testLevel.getEnemies(), gameGraphics);
         gameGraphics.getFrame().add(gameGraphics);
         gameGraphics.getFrame().revalidate();
         gameGraphics.getFrame().repaint();
@@ -81,13 +71,13 @@ public class Game {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 switch (evt.getKeyCode()) {
                     case java.awt.event.KeyEvent.VK_RIGHT:
-                        sonic.moveRight(true);
+                        testLevel.getSonic().moveRight(true);
                         break;
                     case java.awt.event.KeyEvent.VK_LEFT:
-                        sonic.moveLeft(true);
+                        testLevel.getSonic().moveLeft(true);
                         break;
                     case java.awt.event.KeyEvent.VK_SPACE:
-                        sonic.jump();
+                        testLevel.getSonic().jump();
                         break;
                 }
             }
@@ -96,10 +86,10 @@ public class Game {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 switch (evt.getKeyCode()) {
                     case java.awt.event.KeyEvent.VK_RIGHT:
-                        sonic.moveRight(false);
+                        testLevel.getSonic().moveRight(false);
                         break;
                     case java.awt.event.KeyEvent.VK_LEFT:
-                        sonic.moveLeft(false);
+                        testLevel.getSonic().moveLeft(false);
                         break;
                 }
             }

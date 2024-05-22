@@ -44,7 +44,7 @@ public class Enemy extends Entity {
     }
 
     // Updates the enemy's state based on the position of the Sonic character and platforms
-    public void update(Sonic sonic, List<Rectangle> platforms) {
+    public void update(Sonic sonic, List<Enemy> enemies, List<Rectangle> platforms) {
         if (!alive) return;
 
         int distanceX = Math.abs(sonic.getCoord().getX() - coord.getX());
@@ -56,8 +56,14 @@ public class Enemy extends Entity {
             // Move towards Sonic
             if (sonic.getCoord().getX() > coord.getX()) {
                 coord.setX(coord.getX() + speed);
+                if (checkCollisionWithEnemies(enemies) || isNearEdge(platforms, 1)) {
+                    coord.setX(coord.getX() - speed);
+                }
             } else if (sonic.getCoord().getX() < coord.getX()) {
                 coord.setX(coord.getX() - speed);
+                if (checkCollisionWithEnemies(enemies) || isNearEdge(platforms, -1)) {
+                    coord.setX(coord.getX() + speed);
+                }
             }
         } else {
             moving = false;
@@ -78,6 +84,30 @@ public class Enemy extends Entity {
                 sonic.takeDamage(knockBackDirection); // Sonic takes damage if not in ball form
             }
         }
+    }
+
+    // Check for collision with other enemies
+    private boolean checkCollisionWithEnemies(List<Enemy> enemies) {
+        for (Enemy enemy : enemies) {
+            if (enemy != this && checkCollision(enemy)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Check if the enemy is near the edge of a platform
+    private boolean isNearEdge(List<Rectangle> platforms, int direction) {
+        for (Rectangle platform : platforms) {
+            if (coord.getY() + height <= platform.y + platform.height &&
+                    coord.getY() + height >= platform.y) {
+                if ((direction == 1 && coord.getX() + width + speed > platform.x + platform.width) ||
+                        (direction == -1 && coord.getX() - speed < platform.x)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     // Returns the current GIF image to display based on the enemy's state

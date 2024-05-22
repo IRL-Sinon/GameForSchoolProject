@@ -11,7 +11,6 @@ import java.awt.image.AffineTransformOp;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.List;
-import java.util.ArrayList;
 
 class GameGraphics extends JPanel {
     private Sonic sonic; // Represents the Sonic character
@@ -49,16 +48,12 @@ class GameGraphics extends JPanel {
     }
 
     // Sets up the game components
-    public void setupGameComponents(Sonic sonic, List<Enemy> enemies, Lives lives) {
+    public void setupGameComponents(Sonic sonic, List<Enemy> enemies, Lives lives, List<Rectangle> platforms) {
         this.sonic = sonic;
         this.enemies = enemies;
         this.lives = lives;
+        this.platforms = platforms;
         this.camera = new Camera(1920, 1080);
-        // Initialize platforms
-        this.platforms = new ArrayList<>();
-        platforms.add(new Rectangle(0, 400, 1920, 50)); // Platform 1
-        platforms.add(new Rectangle(300, 300, 200, 50)); // Platform 2
-        platforms.add(new Rectangle(600, 300, 200, 50)); // Platform 3
     }
 
     // Starts the game loop with a timer

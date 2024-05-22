@@ -56,12 +56,17 @@ public class Entity {
     public boolean handlePlatformCollision(List<Rectangle> platforms) {
         for (Rectangle platform : platforms) {
             if (coord.getX() + getWidth() > platform.x &&
-                    coord.getX() < platform.x + platform.width &&
-                    coord.getY() + getHeight() > platform.y &&
-                    coord.getY() + getHeight() <= platform.y + platform.height) {
-                coord.setY(platform.y - getHeight());
-                verticalSpeed = 0;
-                return true;
+                    coord.getX() < platform.x + platform.width) {
+                if (coord.getY() + getHeight() > platform.y &&
+                        coord.getY() + getHeight() <= platform.y + platform.height) {
+                    coord.setY(platform.y - getHeight());
+                    verticalSpeed = 0;
+                    return true;
+                } else if (coord.getY() > platform.y &&
+                        coord.getY() < platform.y + platform.height &&
+                        coord.getY() + getHeight() > platform.y + platform.height) {
+                    coord.setY(platform.y + platform.height);
+                }
             }
         }
         return false;

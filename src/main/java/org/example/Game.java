@@ -11,6 +11,8 @@ public class Game {
     private GameLogic gameLogic; // Manages the game logic and interactions
     private JPanel menuPanel; // Represents the menu panel in the game
     private JPanel levelSelectorPanel; // Represents the level selector panel in the game
+    private JPanel winScreenPanel; // Represents the win screen panel in the game
+    private TestLevel testLevel; // Represents the test level in the game
 
     // Starts the game and calls the showMenu method on the Event Dispatch Thread
     public static void main(String[] args) {
@@ -31,6 +33,9 @@ public class Game {
         menuPanel.setVisible(true);
         if (levelSelectorPanel != null) {
             levelSelectorPanel.setVisible(false);
+        }
+        if (winScreenPanel != null) {
+            winScreenPanel.setVisible(false);
         }
         gameGraphics.getFrame().revalidate();
         gameGraphics.getFrame().repaint();
@@ -53,11 +58,11 @@ public class Game {
         gameGraphics.getFrame().remove(levelSelectorPanel);
 
         // Setup the test level
-        TestLevel testLevel = new TestLevel();
+        testLevel = new TestLevel();
 
         // Sets up the game components in the gameGraphics object
         gameGraphics.setupGameComponents(testLevel.getSonic(), testLevel.getEnemies(), testLevel.getLives(), testLevel.getPlatforms());
-        gameLogic = new GameLogic(testLevel.getSonic(), testLevel.getEnemies(), gameGraphics);
+        gameLogic = new GameLogic(testLevel.getSonic(), testLevel.getEnemies(), gameGraphics, testLevel.getLevelEndX(), this::showWinScreen);
         gameGraphics.getFrame().add(gameGraphics);
         gameGraphics.getFrame().revalidate();
         gameGraphics.getFrame().repaint();
@@ -97,6 +102,18 @@ public class Game {
 
         // Requests focus for the frame to capture key events
         gameGraphics.getFrame().requestFocus();
+    }
+
+    // Shows the win screen
+    private void showWinScreen() {
+        if (winScreenPanel == null) {
+            winScreenPanel = new WinScreen(e -> showMenu());
+            gameGraphics.getFrame().add(winScreenPanel);
+        }
+        winScreenPanel.setVisible(true);
+        gameGraphics.setVisible(false);
+        gameGraphics.getFrame().revalidate();
+        gameGraphics.getFrame().repaint();
     }
 
     // Exits the application

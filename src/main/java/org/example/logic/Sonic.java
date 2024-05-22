@@ -55,7 +55,7 @@ public class Sonic extends Entity {
     // Constructor
     public Sonic(int x, int y, int width, int height, Lives lives) {
         super(x, y, width, height);
-        this.jumpStrength = 15;
+        this.jumpStrength = 23;
         this.acceleration = 0.2;
         this.deceleration = 0.1;
         this.fastDeceleration = 0.5;
@@ -197,6 +197,27 @@ public class Sonic extends Entity {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean handlePlatformCollision(List<Rectangle> platforms) {
+        boolean onPlatform = false;
+        for (Rectangle platform : platforms) {
+            if (getCoord().getX() + getWidth() > platform.x &&
+                    getCoord().getX() < platform.x + platform.width) {
+                if (getCoord().getY() + getHeight() > platform.y &&
+                        getCoord().getY() + getHeight() <= platform.y + platform.height) {
+                    getCoord().setY(platform.y - getHeight());
+                    verticalSpeed = 0;
+                    onPlatform = true;
+                } else if (getCoord().getY() > platform.y &&
+                        getCoord().getY() < platform.y + platform.height &&
+                        getCoord().getY() + getHeight() > platform.y + platform.height) {
+                    getCoord().setY(platform.y + platform.height);
+                }
+            }
+        }
+        return onPlatform;
     }
 
     // Returns the current GIF based on Sonic's state

@@ -11,6 +11,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.ArrayList;
 
 class GameGraphics extends JPanel {
     private Sonic sonic; // Represents the Sonic character
@@ -21,6 +22,7 @@ class GameGraphics extends JPanel {
     private Camera camera; // Manages the camera view
     private Image backgroundImage; // Background image of the game
     private JFrame frame; // Main frame of the game window
+    private List<Rectangle> platforms; // List of platforms for Sonic and enemies to walk on
 
     // Constructor initializes the game frame
     public GameGraphics() {
@@ -52,6 +54,10 @@ class GameGraphics extends JPanel {
         this.enemies = enemies;
         this.lives = lives;
         this.camera = new Camera(1920, 1080);
+        // Initialize platforms
+        this.platforms = new ArrayList<>();
+        platforms.add(new Rectangle(0, 400, 1920, 50)); // Platform 1
+        platforms.add(new Rectangle(300, 300, 200, 50)); // Platform 2
     }
 
     // Starts the game loop with a timer
@@ -81,6 +87,12 @@ class GameGraphics extends JPanel {
         // Draw the background image
         if (backgroundImage != null) {
             g2d.drawImage(backgroundImage, -offsetX, -offsetY, this);
+        }
+
+        // Draw the platforms
+        g2d.setColor(Color.GRAY);
+        for (Rectangle platform : platforms) {
+            g2d.fillRect(platform.x - offsetX, platform.y - offsetY, platform.width, platform.height);
         }
 
         // Draw Sonic if he is alive and visible
@@ -134,5 +146,10 @@ class GameGraphics extends JPanel {
         bGr.drawImage(img, 0, 0, null);
         bGr.dispose();
         return bimage;
+    }
+
+    // Returns the list of platforms for collision detection
+    public List<Rectangle> getPlatforms() {
+        return platforms;
     }
 }

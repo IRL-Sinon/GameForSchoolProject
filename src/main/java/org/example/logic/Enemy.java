@@ -3,6 +3,8 @@ package org.example.logic;
 import javax.swing.ImageIcon;
 import java.awt.Image;
 import java.net.URL;
+import java.util.List;
+import java.awt.Rectangle;
 
 public class Enemy extends Entity {
     private int speed;
@@ -27,7 +29,7 @@ public class Enemy extends Entity {
         this.idleGif = loadAndResizeGif("enemyStanding.gif");
         this.walkingGif = loadAndResizeGif("enemyMoving.gif");
         this.moving = false;
-    }   // moving animation is setted to false so enemy starts in standing state
+    }
 
     private ImageIcon loadAndResizeGif(String path) {
         URL imgURL = getClass().getClassLoader().getResource(path);
@@ -41,9 +43,8 @@ public class Enemy extends Entity {
         }
     }
 
-
-     //Updates the enemy's state based on the position of the Sonic character.
-    public void update(Sonic sonic) {
+    // Updates the enemy's state based on the position of the Sonic character and platforms
+    public void update(Sonic sonic, List<Rectangle> platforms) {
         if (!alive) return;
 
         int distanceX = Math.abs(sonic.getCoord().getX() - coord.getX());
@@ -62,6 +63,12 @@ public class Enemy extends Entity {
             moving = false;
         }
 
+        // Apply gravity
+        applyGravity();
+
+        // Check for collision with platforms
+        handlePlatformCollision(platforms);
+
         // Check for collision with Sonic
         if (checkCollision(sonic)) {
             if (sonic.isInBallForm() && sonic.getCoord().getY() + sonic.getHeight() <= coord.getY() + height) {
@@ -73,32 +80,8 @@ public class Enemy extends Entity {
         }
     }
 
-
-     // Returns the current GIF image to display based on the enemy's state.
+    // Returns the current GIF image to display based on the enemy's state
     public ImageIcon getCurrentGif() {
         return moving ? walkingGif : idleGif;
-    }
-
-
-     // Checks if there is a collision between the enemy and Sonic.
-    public boolean checkCollision(Sonic sonic) {
-        if (!alive) return false;
-
-        return sonic.getCoord().getX() + sonic.getWidth() >= coord.getX() &&
-                sonic.getCoord().getX() <= coord.getX() + width &&
-                sonic.getCoord().getY() + sonic.getHeight() >= coord.getY() &&
-                sonic.getCoord().getY() <= coord.getY() + height;
-    }
-
-
-     //Kills the enemy.
-    public void die() {
-        alive = false;
-    }
-
-
-     //Checks if the enemy is still alive.
-    public boolean isAlive() {
-        return alive;
     }
 }

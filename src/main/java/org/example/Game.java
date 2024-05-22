@@ -1,4 +1,3 @@
-// Game class with main menu and level selector logic
 package org.example;
 
 import org.example.logic.Menu;
@@ -68,7 +67,7 @@ public class Game {
 
         // Sets up the game components in the gameGraphics object
         gameGraphics.setupGameComponents(sonic, enemies, lives);
-        gameLogic = new GameLogic(sonic, enemies);
+        gameLogic = new GameLogic(sonic, enemies, gameGraphics);
         gameGraphics.getFrame().add(gameGraphics);
         gameGraphics.getFrame().revalidate();
         gameGraphics.getFrame().repaint();

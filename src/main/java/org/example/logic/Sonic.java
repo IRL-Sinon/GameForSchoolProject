@@ -4,6 +4,7 @@ import javax.swing.ImageIcon;
 import java.awt.Image;
 import java.net.URL;
 import java.util.List;
+import java.awt.Rectangle;
 
 public class Sonic extends Entity {
     // Movement and state flags
@@ -22,8 +23,6 @@ public class Sonic extends Entity {
 
     // Movement parameters
     private double jumpStrength;
-    private double gravity;
-    private double jumpStep;
     private double acceleration;
     private double deceleration;
     private double maxSpeed;
@@ -55,16 +54,14 @@ public class Sonic extends Entity {
     // Constructor
     public Sonic(int x, int y, int width, int height, Lives lives) {
         super(x, y, width, height);
-        this.jumpStrength = 15;
-        this.gravity = 2;
-        this.jumpStep = 0;
+        this.jumpStrength = 25;
         this.acceleration = 0.2;
         this.deceleration = 0.1;
         this.maxSpeed = 15;
         this.currentSpeed = 0;
         this.lives = lives;
         this.inBallForm = false;
-        this.canJump = true;
+        this.canJump = false; // Initially set to false
         this.immortal = false;
         this.immortalTime = 0;
         this.immortalDuration = 100;
@@ -109,15 +106,13 @@ public class Sonic extends Entity {
     public void jump() {
         if (canJump && !jumping) {
             jumping = true;
-            jumpStep = jumpStrength;
+            verticalSpeed = -jumpStrength;
             inBallForm = true;
-            width = 20;
-            height = 20;
         }
     }
 
-    // Updates Sonic's state and interacts with enemies
-    public void update(List<Enemy> enemies) {
+    // Updates Sonic's state and interacts with enemies and platforms
+    public void update(List<Enemy> enemies, List<Rectangle> platforms) {
         if (!isAlive()) return;
 
         if (immortal) {
@@ -166,32 +161,30 @@ public class Sonic extends Entity {
 
         getCoord().setX(getCoord().getX() + (int) currentSpeed);
 
-        if (jumping) {
-            getCoord().setY(getCoord().getY() - (int) jumpStep);
-            jumpStep -= gravity;
-            if (getCoord().getY() >= 200) {
-                getCoord().setY(200);
+        // Apply gravity and vertical movement
+        applyGravity();
+
+        // Check for collision with platforms
+        boolean onPlatform = handlePlatformCollision(platforms);
+
+        if (onPlatform) {
+            canJump = true;
+            if (jumping) {
                 jumping = false;
                 inBallForm = false;
                 width = 20;
                 height = 20;
-                canJump = true;
             }
         } else {
-            if (getCoord().getY() < 200) {
-                getCoord().setY(getCoord().getY() + (int) gravity);
-            } else {
-                canJump = true;
-            }
+            canJump = false;
         }
 
         for (Enemy enemy : enemies) {
-            if (checkCollision(enemy)) {
+            if (enemy.isAlive() && checkCollision(enemy)) {
                 if (isInBallForm() && getCoord().getY() + getHeight() <= enemy.getCoord().getY() + enemy.getHeight()) {
                     enemy.die();
-
+                    verticalSpeed = -jumpStrength; // Bounce off the enemy
                     jumping = true;
-                    jumpStep = jumpStrength;
                 } else if (!isInBallForm() && enemy.isAlive()) {
                     int knockBackDirection = getCoord().getX() > enemy.getCoord().getX() ? 1 : -1;
                     takeDamage(knockBackDirection);

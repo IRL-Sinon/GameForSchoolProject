@@ -58,6 +58,7 @@ class GameGraphics extends JPanel {
         this.platforms = new ArrayList<>();
         platforms.add(new Rectangle(0, 400, 1920, 50)); // Platform 1
         platforms.add(new Rectangle(300, 300, 200, 50)); // Platform 2
+        platforms.add(new Rectangle(600, 300, 200, 50)); // Platform 3
     }
 
     // Starts the game loop with a timer

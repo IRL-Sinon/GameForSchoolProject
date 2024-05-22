@@ -8,7 +8,6 @@ public class Camera {
 
 
      // Constructor to initialize the camera with the given screen dimensions.
-
     public Camera(int screenWidth, int screenHeight) {
         // Initialize screen dimensions to half the actual screen size for centering
         this.screenWidth = screenWidth / 2;
@@ -19,7 +18,6 @@ public class Camera {
 
 
      //Updates the camera's position based on Sonic's position and follows him.
-
     public void update(Sonic sonic) {
         // Update the camera position to follow Sonic
         x = (int) (sonic.getCoord().getX() - screenWidth / 1.5);
@@ -28,7 +26,6 @@ public class Camera {
 
 
     //Gets the current X-coordinate of the camera and returns it.
-
     public int getX() {
         return x;
     }

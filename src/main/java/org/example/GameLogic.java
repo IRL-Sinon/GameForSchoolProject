@@ -4,7 +4,7 @@ import org.example.logic.Sonic;
 import org.example.logic.Enemy;
 
 import java.util.List;
-
+    // GameLogic takes care of logic for game and updates player annd enemy
 public class GameLogic {
     private Sonic sonic; // Represents the Sonic character
     private List<Enemy> enemies; // Stores a list of enemies in the game

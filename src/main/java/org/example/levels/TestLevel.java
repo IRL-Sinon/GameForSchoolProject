@@ -51,7 +51,7 @@ public class TestLevel {
         sonic = new Sonic(50, 380, 20, 20, lives);
 
         // Define the end of the level
-        levelEndX = 5000; // X-coordinate for the end of the level
+        levelEndX = 4950; // X-coordinate for the end of the level
         levelEndY = 400;
     }
 

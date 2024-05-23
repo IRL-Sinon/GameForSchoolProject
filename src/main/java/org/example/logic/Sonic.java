@@ -56,10 +56,10 @@ public class Sonic extends Entity {
     public Sonic(int x, int y, int width, int height, Lives lives) {
         super(x, y, width, height);
         this.jumpStrength = 27;
-        this.acceleration = 0.3;
-        this.deceleration = 0.5;
-        this.fastDeceleration = 1.3;
-        this.maxSpeed = 23;
+        this.acceleration = 0.5;
+        this.deceleration = 0.4;
+        this.fastDeceleration = 1.1;
+        this.maxSpeed = 25;
         this.currentSpeed = 0;
         this.lives = lives;
         this.inBallForm = false;
@@ -229,9 +229,9 @@ public class Sonic extends Entity {
             currentGif = damageGif;
         } else if (isInBallForm()) {
             currentGif = ballGif;
-        } else if (Math.abs(currentSpeed) >= 10) {
+        } else if (Math.abs(currentSpeed) >= 19) {
             currentGif = fullSpeedGif;
-        } else if (Math.abs(currentSpeed) >= 6) {
+        } else if (Math.abs(currentSpeed) >= 12) {
             currentGif = slowRunGif;
         } else if (Math.abs(currentSpeed) >= 1) {
             currentGif = walkingGif;

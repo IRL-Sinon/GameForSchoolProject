@@ -6,7 +6,7 @@ public class Lives {
     public Lives(int initialLives) {
         this.livesCount = initialLives;
     }
-//returns how manyy lives player have
+//returns how many lives player have
     public int getLives() {
         return livesCount;
     }

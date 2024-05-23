@@ -36,7 +36,7 @@ class GameGraphics extends JPanel {
         frame.setUndecorated(false);
         frame.setLocationRelativeTo(null);
         frame.setSize(800, 600);
-        ImageIcon icon = new ImageIcon("src/main/resources/sonic icon.png");
+        ImageIcon icon = new ImageIcon("sonic icon.png");
         frame.setIconImage(icon.getImage());
         frame.add(this);
         frame.setVisible(true);
@@ -111,7 +111,9 @@ class GameGraphics extends JPanel {
         }
 
         // Draw enemies if they are alive
+
         for (Enemy enemy : enemies) {
+
             if (enemy.isAlive()) {
                 ImageIcon currentGif = enemy.getCurrentGif();
                 if (currentGif != null) {

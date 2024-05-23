@@ -14,7 +14,7 @@ public class TestLevel {
     private Sonic sonic;
     private Lives lives;
     private int levelEndX;
-    private int levelEndY;
+   
 
     public TestLevel() {
         setupLevel();
@@ -34,7 +34,7 @@ public class TestLevel {
         platforms.add(new Rectangle(2600, 100, 150, 50)); // Platform 8
         platforms.add(new Rectangle(2900, 50, 200, 50));  // Platform 9
 
-        // Setup enemies
+       // Setup enemies
         enemies = new ArrayList<>();
         enemies.add(new Enemy(1500, 280, 20, 20, 300, 100));
         enemies.add(new Enemy(1800, 230, 20, 20, 300, 100));

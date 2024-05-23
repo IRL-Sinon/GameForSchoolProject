@@ -55,15 +55,15 @@ public class Sonic extends Entity {
     // Constructor
     public Sonic(int x, int y, int width, int height, Lives lives) {
         super(x, y, width, height);
-        this.jumpStrength = 23;
-        this.acceleration = 0.2;
-        this.deceleration = 0.1;
-        this.fastDeceleration = 0.5;
-        this.maxSpeed = 15;
+        this.jumpStrength = 27;
+        this.acceleration = 0.3;
+        this.deceleration = 0.5;
+        this.fastDeceleration = 1.3;
+        this.maxSpeed = 23;
         this.currentSpeed = 0;
         this.lives = lives;
         this.inBallForm = false;
-        this.canJump = false; // Initially set to false
+        this.canJump = false;
         this.immortal = false;
         this.immortalTime = 0;
         this.immortalDuration = 100;

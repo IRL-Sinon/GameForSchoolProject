@@ -39,11 +39,8 @@ public class TestLevel {
         enemies.add(new Enemy(1500, 280, 20, 20, 300, 100));
         enemies.add(new Enemy(1800, 230, 20, 20, 300, 100));
         enemies.add(new Enemy(2100, 180, 20, 20, 300, 100));
-        enemies.add(new Enemy(2400, 130, 20, 20, 300, 100));
         enemies.add(new Enemy(2700, 80, 20, 20, 300, 100));
         enemies.add(new Enemy(3000, 30, 20, 20, 300, 100));
-        enemies.add(new Enemy(3300, 80, 20, 20, 300, 100));
-        enemies.add(new Enemy(3600, 130, 20, 20, 300, 100));
         enemies.add(new Enemy(3900, 180, 20, 20, 300, 100));
 
         // Setup Sonic and lives

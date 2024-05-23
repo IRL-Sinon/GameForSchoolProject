@@ -17,7 +17,7 @@ public class Entity {
         this.width = width;
         this.height = height;
         this.alive = true;
-        this.gravity = 2;
+        this.gravity = 2.5;
         this.verticalSpeed = 0;
     }
 

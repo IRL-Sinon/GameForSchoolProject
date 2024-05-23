@@ -14,7 +14,7 @@ public class TestLevel {
     private Sonic sonic;
     private Lives lives;
     private int levelEndX;
-   
+    private int levelEndY;
 
     public TestLevel() {
         setupLevel();

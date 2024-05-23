@@ -14,7 +14,8 @@ public class Enemy extends Entity {
     private ImageIcon idleGif;
     private ImageIcon walkingGif;
 
-    private boolean moving;
+    private boolean movingLeft;
+    private boolean movingRight;
 
     private int gifWidth = 50;
     private int gifHeight = 50;
@@ -28,7 +29,8 @@ public class Enemy extends Entity {
         // Load GIFs for idle and walking animations with set path
         this.idleGif = loadAndResizeGif("enemyStanding.gif");
         this.walkingGif = loadAndResizeGif("enemyMoving.gif");
-        this.moving = false;
+        this.movingLeft = false;
+        this.movingRight = false;
     }
 
     private ImageIcon loadAndResizeGif(String path) {
@@ -50,23 +52,17 @@ public class Enemy extends Entity {
         int distanceX = Math.abs(sonic.getCoord().getX() - coord.getX());
         int distanceY = Math.abs(sonic.getCoord().getY() - coord.getY());
 
-        // Check if Sonic is within detection range
+        movingLeft = false;
+        movingRight = false;
+
         if (distanceX <= detectionRangeX && distanceY <= detectionRangeY) {
-            moving = true;
-            // Move towards Sonic
-            if (sonic.getCoord().getX() > coord.getX()) {
-                coord.setX(coord.getX() + speed);
-                if (checkCollisionWithEnemies(enemies) || isNearEdge(platforms, 1)) {
-                    coord.setX(coord.getX() - speed);
-                }
-            } else if (sonic.getCoord().getX() < coord.getX()) {
+            if (sonic.getCoord().getX() < coord.getX()) {
+                movingLeft = true;
                 coord.setX(coord.getX() - speed);
-                if (checkCollisionWithEnemies(enemies) || isNearEdge(platforms, -1)) {
-                    coord.setX(coord.getX() + speed);
-                }
+            } else if (sonic.getCoord().getX() > coord.getX()) {
+                movingRight = true;
+                coord.setX(coord.getX() + speed);
             }
-        } else {
-            moving = false;
         }
 
         // Apply gravity
@@ -74,44 +70,10 @@ public class Enemy extends Entity {
 
         // Check for collision with platforms
         handlePlatformCollision(platforms);
-
-        // Check for collision with Sonic
-        if (checkCollision(sonic)) {
-            if (sonic.isInBallForm() && sonic.getCoord().getY() + sonic.getHeight() <= coord.getY() + height) {
-                die(); // Enemy dies if Sonic hits it while in ball form
-            } else if (!sonic.isInBallForm()) {
-                int knockBackDirection = sonic.getCoord().getX() > coord.getX() ? 1 : -1;
-                sonic.takeDamage(knockBackDirection); // Sonic takes damage if not in ball form
-            }
-        }
-    }
-
-    // Check for collision with other enemies
-    private boolean checkCollisionWithEnemies(List<Enemy> enemies) {
-        for (Enemy enemy : enemies) {
-            if (enemy != this && checkCollision(enemy)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // Check if the enemy is near the edge of a platform
-    private boolean isNearEdge(List<Rectangle> platforms, int direction) {
-        for (Rectangle platform : platforms) {
-            if (coord.getY() + height <= platform.y + platform.height &&
-                    coord.getY() + height >= platform.y) {
-                if ((direction == 1 && coord.getX() + width + speed > platform.x + platform.width) ||
-                        (direction == -1 && coord.getX() - speed < platform.x)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     // Returns the current GIF image to display based on the enemy's state
     public ImageIcon getCurrentGif() {
-        return moving ? walkingGif : idleGif;
+        return movingLeft || movingRight ? walkingGif : idleGif;
     }
 }

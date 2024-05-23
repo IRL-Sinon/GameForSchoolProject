@@ -13,6 +13,7 @@ public class Game {
     private JPanel levelSelectorPanel; // Represents the level selector panel in the game
     private JPanel winScreenPanel; // Represents the win screen panel in the game
     private TestLevel testLevel; // Represents the test level in the game
+    private boolean isWinScreenDisplayed = false; // Tracks if the WinScreen is already displayed
 
     // Starts the game and calls the showMenu method on the Event Dispatch Thread
     public static void main(String[] args) {
@@ -104,11 +105,20 @@ public class Game {
         gameGraphics.getFrame().requestFocus();
     }
 
+    // Resets the test level
+    private void resetLevel() {
+        gameGraphics.getFrame().remove(winScreenPanel);
+        winScreenPanel = null;
+        isWinScreenDisplayed = false; // Reset the WinScreen flag
+        startTestLevel(); // Starts level from the beginning
+    }
+
     // Shows the win screen
     private void showWinScreen() {
-        if (winScreenPanel == null) {
-            winScreenPanel = new WinScreen(e -> showMenu());
+        if (!isWinScreenDisplayed) { // Check if WinScreen is not already displayed
+            winScreenPanel = new WinScreen(e -> resetLevel(), e -> showMenu());
             gameGraphics.getFrame().add(winScreenPanel);
+            isWinScreenDisplayed = true; // Set the flag to indicate that WinScreen is displayed
         }
         winScreenPanel.setVisible(true);
         gameGraphics.setVisible(false);

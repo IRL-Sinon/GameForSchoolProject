@@ -6,8 +6,8 @@ import java.awt.event.ActionListener;
 
 public class WinScreen extends JPanel {
 
-    // Constructor initializes the win screen with a message and a button to go back to the main menu
-    public WinScreen(ActionListener backToMenuAction) {
+    // Constructor initializes the win screen with a message and buttons
+    public WinScreen(ActionListener resetLevelAction, ActionListener backToMenuAction) {
         // Sets the layout of the win screen to GridBagLayout
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -20,12 +20,13 @@ public class WinScreen extends JPanel {
         gbc.gridy = 0;
         add(winLabel, gbc); // Adds the win message label to the panel
 
+
         // Creates and configures the back to menu button
         JButton backButton = new JButton("Back to Menu");
         backButton.setFont(new Font("Arial", Font.BOLD, 24));
         backButton.addActionListener(backToMenuAction);
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         add(backButton, gbc); // Adds the back to menu button to the panel
     }
 }

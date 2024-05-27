@@ -13,6 +13,7 @@
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>**/*.gif</include>
+                    <include>**/*.wav</include>
                 </includes>
             </resource>
         </resources>

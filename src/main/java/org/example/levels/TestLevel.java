@@ -4,7 +4,10 @@ import org.example.logic.Enemy;
 import org.example.logic.Lives;
 import org.example.logic.Sonic;
 
+import javax.sound.sampled.*;
 import java.awt.*;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +18,7 @@ public class TestLevel extends Level {
     private List<Rectangle> platforms;
     private int levelEndX;
     private final int playerStartX = 100;
+    private Clip backgroundClip; // Clip for background music
 
     public TestLevel() {
         initializeLevel();
@@ -42,6 +46,9 @@ public class TestLevel extends Level {
         // Initialize Sonic at the first platform
         Rectangle firstPlatform = platforms.get(0);
         sonic = new Sonic(firstPlatform.x, firstPlatform.y - 50, 50, 50, lives);
+
+        // Start background music
+        startBackgroundMusic("Level-1.wav"); // Specify the path to your audio file
     }
 
     @Override
@@ -71,6 +78,7 @@ public class TestLevel extends Level {
 
     @Override
     public void reset() {
+        stopBackgroundMusic();
         initializeLevel(); // Reset the level to its initial state
     }
 
@@ -80,5 +88,31 @@ public class TestLevel extends Level {
         Rectangle firstPlatform = platforms.get(0);
         sonic.setPosition(firstPlatform.x, firstPlatform.y - 50);
         sonic.resetState();
+    }
+
+    // Start background music
+    private void startBackgroundMusic(String filePath) {
+        try {
+            URL soundURL = getClass().getClassLoader().getResource(filePath);
+            if (soundURL != null) {
+                AudioInputStream audioStream = AudioSystem.getAudioInputStream(soundURL);
+                backgroundClip = AudioSystem.getClip();
+                backgroundClip.open(audioStream);
+                backgroundClip.loop(Clip.LOOP_CONTINUOUSLY); // Loop the background music
+                backgroundClip.start();
+            } else {
+                System.err.println("Couldn't find file: " + filePath);
+            }
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Stop background music
+    private void stopBackgroundMusic() {
+        if (backgroundClip != null) {
+            backgroundClip.stop();
+            backgroundClip.close();
+        }
     }
 }

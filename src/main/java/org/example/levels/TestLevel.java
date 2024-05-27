@@ -1,74 +1,84 @@
 package org.example.levels;
 
-import org.example.logic.Sonic;
 import org.example.logic.Enemy;
 import org.example.logic.Lives;
+import org.example.logic.Sonic;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestLevel {
-    private List<Rectangle> platforms;
-    private List<Enemy> enemies;
+public class TestLevel extends Level {
     private Sonic sonic;
+    private List<Enemy> enemies;
     private Lives lives;
+    private List<Rectangle> platforms;
     private int levelEndX;
-    private int levelEndY;
+    private final int playerStartX = 100;
 
     public TestLevel() {
-        setupLevel();
+        initializeLevel();
     }
 
-    private void setupLevel() {
-        // Setup platforms
+    private void initializeLevel() {
+        // Initialize level components
         platforms = new ArrayList<>();
-        platforms.add(new Rectangle(0, 400, 5000, 50)); // Ground
-        platforms.add(new Rectangle(300, 300, 200, 50)); // Platform 1
-        platforms.add(new Rectangle(600, 250, 150, 50)); // Platform 2
-        platforms.add(new Rectangle(900, 350, 300, 50)); // Platform 3
-        platforms.add(new Rectangle(1300, 300, 200, 50)); // Platform 4
-        platforms.add(new Rectangle(1600, 250, 150, 50)); // Platform 5
-        platforms.add(new Rectangle(1900, 200, 300, 50)); // Platform 6
-        platforms.add(new Rectangle(2300, 150, 200, 50)); // Platform 7
-        platforms.add(new Rectangle(2600, 100, 150, 50)); // Platform 8
-        platforms.add(new Rectangle(2900, 50, 200, 50));  // Platform 9
-
-       // Setup enemies
         enemies = new ArrayList<>();
-        enemies.add(new Enemy(1500, 280, 20, 20, 300, 100));
-        enemies.add(new Enemy(1800, 230, 20, 20, 300, 100));
-        enemies.add(new Enemy(2100, 180, 20, 20, 300, 100));
-        enemies.add(new Enemy(2700, 80, 20, 20, 300, 100));
-        enemies.add(new Enemy(3000, 30, 20, 20, 300, 100));
-        enemies.add(new Enemy(3900, 180, 20, 20, 300, 100));
-
-        // Setup Sonic and lives
         lives = new Lives(3);
-        sonic = new Sonic(50, 380, 20, 20, lives);
+        levelEndX = 2000; // Extended length for a longer level
 
-        // Define the end of the level
-        levelEndX = 4950; // X-coordinate for the end of the level
-        levelEndY = 400;
+        // Add platforms
+        platforms.add(new Rectangle(50, 350, 300, 50));
+        platforms.add(new Rectangle(400, 300, 300, 50));
+        platforms.add(new Rectangle(750, 250, 300, 50));
+        platforms.add(new Rectangle(1100, 200, 300, 50));
+        platforms.add(new Rectangle(1450, 150, 300, 50));
+
+        // Add enemies
+        enemies.add(new Enemy(500, 250, 50, 50, 100, 100));
+        enemies.add(new Enemy(850, 200, 50, 50, 100, 100));
+        enemies.add(new Enemy(1200, 150, 50, 50, 100, 100));
+
+        // Initialize Sonic at the first platform
+        Rectangle firstPlatform = platforms.get(0);
+        sonic = new Sonic(firstPlatform.x, firstPlatform.y - 50, 50, 50, lives);
     }
 
-    public List<Rectangle> getPlatforms() {
-        return platforms;
-    }
-
-    public List<Enemy> getEnemies() {
-        return enemies;
-    }
-
+    @Override
     public Sonic getSonic() {
         return sonic;
     }
 
+    @Override
+    public List<Enemy> getEnemies() {
+        return enemies;
+    }
+
+    @Override
     public Lives getLives() {
         return lives;
     }
 
+    @Override
+    public List<Rectangle> getPlatforms() {
+        return platforms;
+    }
+
+    @Override
     public int getLevelEndX() {
         return levelEndX;
+    }
+
+    @Override
+    public void reset() {
+        initializeLevel(); // Reset the level to its initial state
+    }
+
+    @Override
+    public void spawnPlayer() {
+        // Reset Sonic's position to the first platform
+        Rectangle firstPlatform = platforms.get(0);
+        sonic.setPosition(firstPlatform.x, firstPlatform.y - 50);
+        sonic.resetState();
     }
 }

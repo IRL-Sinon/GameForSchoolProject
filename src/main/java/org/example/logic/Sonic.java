@@ -306,4 +306,23 @@ public class Sonic extends Entity {
         }
         return true;
     }
+
+    // Sets Sonic's position
+    public void setPosition(int x, int y) {
+        getCoord().setX(x);
+        getCoord().setY(y);
+    }
+
+    // Resets Sonic's state
+    public void resetState() {
+        currentSpeed = 0;
+        jumping = false;
+        inBallForm = false;
+        canJump = false;
+        immortal = false;
+        immortalTime = 0;
+        beingKnockedBack = false;
+        knockBackTime = 0;
+        knockBackDirection = 0;
+    }
 }

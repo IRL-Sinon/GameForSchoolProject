@@ -53,11 +53,14 @@ class GameGraphics extends JPanel {
         this.enemies = enemies;
         this.lives = lives;
         this.platforms = platforms;
-        this.camera = new Camera(1920, 1080);
+        this.camera = new Camera(1920, 1080); // Initialize camera with screen dimensions
     }
 
     // Starts the game loop with a timer
     public void startGameLoop(GameLogic gameLogic) {
+        if (timer != null) {
+            timer.stop();
+        }
         timer = new Timer(17, e -> {
             gameLogic.update();
             if (camera != null) {
@@ -98,6 +101,10 @@ class GameGraphics extends JPanel {
                 Image image = currentGif.getImage();
                 int drawX = sonic.getCoord().getX() - offsetX;
                 int drawY = sonic.getCoord().getY() - offsetY;
+
+                // Adjust Sonic's y-coordinate to be closer to the bottom of the screen
+                drawY = Math.min(getHeight() - sonic.getHeight() - 150, drawY); // Adjust 150 to position Sonic at the bottom
+
                 if (!sonic.isFacingRight()) {
                     AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
                     tx.translate(-image.getWidth(null), 0);
@@ -111,9 +118,7 @@ class GameGraphics extends JPanel {
         }
 
         // Draw enemies if they are alive
-
         for (Enemy enemy : enemies) {
-
             if (enemy.isAlive()) {
                 ImageIcon currentGif = enemy.getCurrentGif();
                 if (currentGif != null) {

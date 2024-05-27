@@ -1,10 +1,14 @@
 package org.example;
 
 import org.example.logic.*;
+import org.example.levels.Level;
 import org.example.levels.TestLevel;
 
 import javax.swing.*;
-import java.util.List;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Game {
     private GameGraphics gameGraphics; // Manages the graphical elements of the game
@@ -12,8 +16,11 @@ public class Game {
     private JPanel menuPanel; // Represents the menu panel in the game
     private JPanel levelSelectorPanel; // Represents the level selector panel in the game
     private JPanel winScreenPanel; // Represents the win screen panel in the game
-    private TestLevel testLevel; // Represents the test level in the game
+    private Level currentLevel; // Represents the current level in the game
+    private String currentLevelName; // Keeps track of the current level's name
     private boolean isWinScreenDisplayed = false; // Tracks if the WinScreen is already displayed
+
+    private Map<String, Level> levels; // Stores available levels
 
     // Starts the game and calls the showMenu method on the Event Dispatch Thread
     public static void main(String[] args) {
@@ -23,6 +30,10 @@ public class Game {
     // Initializes the gameGraphics object
     public Game() {
         gameGraphics = new GameGraphics();
+        levels = new HashMap<>();
+        // Add levels here
+        levels.put("Test Level", new TestLevel());
+        // Add more levels as needed
     }
 
     // Creates a new menu panel with start and exit buttons
@@ -37,7 +48,10 @@ public class Game {
         }
         if (winScreenPanel != null) {
             winScreenPanel.setVisible(false);
+            gameGraphics.getFrame().remove(winScreenPanel);
+            winScreenPanel = null;
         }
+        gameGraphics.setVisible(false);
         gameGraphics.getFrame().revalidate();
         gameGraphics.getFrame().repaint();
     }
@@ -45,28 +59,66 @@ public class Game {
     // Shows the level selector panel
     private void showLevelSelector() {
         if (levelSelectorPanel == null) {
-            levelSelectorPanel = new LevelSelector(e -> startTestLevel(), e -> showMenu());
+            levelSelectorPanel = new LevelSelector(new LevelSelectionHandler(), e -> showMenu(), levels.keySet());
             gameGraphics.getFrame().add(levelSelectorPanel);
         }
         levelSelectorPanel.setVisible(true);
-        menuPanel.setVisible(false);
+        if (menuPanel != null) {
+            menuPanel.setVisible(false);
+        }
+        gameGraphics.setVisible(false);
         gameGraphics.getFrame().revalidate();
         gameGraphics.getFrame().repaint();
     }
 
-    // Starts the test level
-    private void startTestLevel() {
-        gameGraphics.getFrame().remove(levelSelectorPanel);
+    // Handles level selection
+    private class LevelSelectionHandler implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String levelName = e.getActionCommand();
+            startLevel(levelName);
+        }
+    }
 
-        // Setup the test level
-        testLevel = new TestLevel();
+    // Starts the specified level
+    private void startLevel(String levelName) {
+        System.out.println("Starting level: " + levelName); // Debugging line
+
+        if (levelSelectorPanel != null) {
+            levelSelectorPanel.setVisible(false);
+        }
+        if (winScreenPanel != null) {
+            gameGraphics.getFrame().remove(winScreenPanel);
+            winScreenPanel = null;
+        }
+        isWinScreenDisplayed = false;
+
+        // Check if the level exists
+        if (!levels.containsKey(levelName)) {
+            System.err.println("Level not found: " + levelName);
+            return;
+        }
+
+        // Setup the specified level
+        currentLevel = levels.get(levelName);
+        currentLevelName = levelName;
+
+        // Ensure currentLevel is not null
+        if (currentLevel == null) {
+            System.err.println("Current level is null for level name: " + levelName);
+            return;
+        }
+
+        // Spawn the player at the starting position
+        currentLevel.spawnPlayer();
 
         // Sets up the game components in the gameGraphics object
-        gameGraphics.setupGameComponents(testLevel.getSonic(), testLevel.getEnemies(), testLevel.getLives(), testLevel.getPlatforms());
-        gameLogic = new GameLogic(testLevel.getSonic(), testLevel.getEnemies(), gameGraphics, testLevel.getLevelEndX(), this::showWinScreen);
+        gameGraphics.setupGameComponents(currentLevel.getSonic(), currentLevel.getEnemies(), currentLevel.getLives(), currentLevel.getPlatforms());
+        gameLogic = new GameLogic(currentLevel.getSonic(), currentLevel.getEnemies(), gameGraphics, currentLevel.getLevelEndX(), this::showWinScreen);
         gameGraphics.getFrame().add(gameGraphics);
         gameGraphics.getFrame().revalidate();
         gameGraphics.getFrame().repaint();
+        gameGraphics.setVisible(true);
 
         // Starts the game loop
         gameGraphics.startGameLoop(gameLogic);
@@ -77,13 +129,13 @@ public class Game {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 switch (evt.getKeyCode()) {
                     case java.awt.event.KeyEvent.VK_RIGHT:
-                        testLevel.getSonic().moveRight(true);
+                        currentLevel.getSonic().moveRight(true);
                         break;
                     case java.awt.event.KeyEvent.VK_LEFT:
-                        testLevel.getSonic().moveLeft(true);
+                        currentLevel.getSonic().moveLeft(true);
                         break;
                     case java.awt.event.KeyEvent.VK_SPACE:
-                        testLevel.getSonic().jump();
+                        currentLevel.getSonic().jump();
                         break;
                 }
             }
@@ -92,10 +144,10 @@ public class Game {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 switch (evt.getKeyCode()) {
                     case java.awt.event.KeyEvent.VK_RIGHT:
-                        testLevel.getSonic().moveRight(false);
+                        currentLevel.getSonic().moveRight(false);
                         break;
                     case java.awt.event.KeyEvent.VK_LEFT:
-                        testLevel.getSonic().moveLeft(false);
+                        currentLevel.getSonic().moveLeft(false);
                         break;
                 }
             }
@@ -105,25 +157,29 @@ public class Game {
         gameGraphics.getFrame().requestFocus();
     }
 
-    // Resets the test level
-    private void resetLevel() {
-        gameGraphics.getFrame().remove(winScreenPanel);
-        winScreenPanel = null;
-        isWinScreenDisplayed = false; // Reset the WinScreen flag
-        startTestLevel(); // Starts level from the beginning
-    }
-
     // Shows the win screen
     private void showWinScreen() {
         if (!isWinScreenDisplayed) { // Check if WinScreen is not already displayed
-            winScreenPanel = new WinScreen(e -> resetLevel(), e -> showMenu());
+            winScreenPanel = new WinScreen(e -> {
+                resetLevel();
+                showMenu();
+            });
             gameGraphics.getFrame().add(winScreenPanel);
             isWinScreenDisplayed = true; // Set the flag to indicate that WinScreen is displayed
         }
-        winScreenPanel.setVisible(true);
+        if (winScreenPanel != null) {
+            winScreenPanel.setVisible(true);
+        }
         gameGraphics.setVisible(false);
         gameGraphics.getFrame().revalidate();
         gameGraphics.getFrame().repaint();
+    }
+
+    // Resets the level to its initial state
+    private void resetLevel() {
+        if (currentLevel != null) {
+            currentLevel.reset();
+        }
     }
 
     // Exits the application

@@ -349,4 +349,14 @@ public class Sonic extends Entity {
         coyoteTimeCounter = 0;
         jumpBufferCounter = 0;
     }
+
+    // Getter for Lives
+    public Lives getLives() {
+        return lives;
+    }
+
+    // Check if Sonic has fallen below a certain Y-coordinate
+    public boolean hasFallen(int fallYCoordinate) {
+        return getCoord().getY() > fallYCoordinate;
+    }
 }

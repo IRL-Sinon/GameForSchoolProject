@@ -11,44 +11,28 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestLevel extends Level {
+public class LevelTwo extends Level {
     private Sonic sonic;
     private List<Enemy> enemies;
     private Lives lives;
     private List<Rectangle> platforms;
     private int levelEndX;
-    private final int playerStartX = 100;
-    private Clip backgroundClip; // Clip for background music
+    private Clip backgroundClip;
 
-    public TestLevel() {
+    public LevelTwo() {
         initializeLevel();
     }
 
     private void initializeLevel() {
-        // Initialize level components
         platforms = new ArrayList<>();
         enemies = new ArrayList<>();
         lives = new Lives(3);
-        levelEndX = 2000; // Extended length for a longer level
+        levelEndX = 20000; // Much longer length for an intermediate level
 
-        // Add platforms
-        platforms.add(new Rectangle(50, 350, 300, 50));
-        platforms.add(new Rectangle(400, 300, 300, 50));
-        platforms.add(new Rectangle(750, 250, 300, 50));
-        platforms.add(new Rectangle(1100, 200, 300, 50));
-        platforms.add(new Rectangle(1450, 150, 300, 50));
+        //add platforms and delete this comment later
 
-        // Add enemies
-        enemies.add(new Enemy(500, 250, 50, 50, 100, 100));
-        enemies.add(new Enemy(850, 200, 50, 50, 100, 100));
-        enemies.add(new Enemy(1200, 150, 50, 50, 100, 100));
 
-        // Initialize Sonic at the first platform
-        Rectangle firstPlatform = platforms.get(0);
-        sonic = new Sonic(firstPlatform.x, firstPlatform.y - 50, 50, 50, lives);
-
-        // Start background music
-        startBackgroundMusic("Level-1.wav"); // Specify the path to your audio file
+        //add enemies and delete this comment later
     }
 
     @Override
@@ -79,26 +63,24 @@ public class TestLevel extends Level {
     @Override
     public void reset() {
         stopBackgroundMusic();
-        initializeLevel(); // Reset the level to its initial state
+        initializeLevel();
     }
 
     @Override
     public void spawnPlayer() {
-        // Reset Sonic's position to the first platform
         Rectangle firstPlatform = platforms.get(0);
         sonic.setPosition(firstPlatform.x, firstPlatform.y - 50);
         sonic.resetState();
     }
 
-    // Start background music
-    private void startBackgroundMusic(String filePath) {
+    public void startBackgroundMusic(String filePath) {
         try {
             URL soundURL = getClass().getClassLoader().getResource(filePath);
             if (soundURL != null) {
                 AudioInputStream audioStream = AudioSystem.getAudioInputStream(soundURL);
                 backgroundClip = AudioSystem.getClip();
                 backgroundClip.open(audioStream);
-                backgroundClip.loop(Clip.LOOP_CONTINUOUSLY); // Loop the background music
+                backgroundClip.loop(Clip.LOOP_CONTINUOUSLY);
                 backgroundClip.start();
             } else {
                 System.err.println("Couldn't find file: " + filePath);
@@ -108,8 +90,7 @@ public class TestLevel extends Level {
         }
     }
 
-    // Stop background music
-    private void stopBackgroundMusic() {
+    public void stopBackgroundMusic() {
         if (backgroundClip != null) {
             backgroundClip.stop();
             backgroundClip.close();

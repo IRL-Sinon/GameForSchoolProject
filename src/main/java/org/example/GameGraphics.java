@@ -61,7 +61,7 @@ class GameGraphics extends JPanel {
         if (timer != null) {
             timer.stop();
         }
-        timer = new Timer(17, e -> {
+        timer = new Timer(25, e -> {
             gameLogic.update();
             if (camera != null) {
                 camera.update(sonic);

@@ -15,6 +15,12 @@ public class Sonic extends Entity {
     private boolean inBallForm;
     private boolean immortal;
 
+    // Coyote time and jump buffer
+    private int coyoteTimeCounter;
+    private final int coyoteTime = 10; // Duration of coyote time (frames)
+    private int jumpBufferCounter;
+    private final int jumpBufferTime = 5; // Duration of jump buffer (frames)
+
     // Timers and durations
     private int immortalTime;
     private int immortalDuration;
@@ -73,6 +79,10 @@ public class Sonic extends Entity {
         this.knockBackTime = 0;
         this.knockBackDirection = 0;
 
+        // Initialize coyote time and jump buffer
+        this.coyoteTimeCounter = 0;
+        this.jumpBufferCounter = 0;
+
         // Load GIFs for different states
         this.idleGif = loadAndResizeGif("sonicIdle.gif");
         this.walkingGif = loadAndResizeGif("sonicWalking.gif");
@@ -106,11 +116,7 @@ public class Sonic extends Entity {
 
     // Method to handle jumping
     public void jump() {
-        if (canJump && !jumping) {
-            jumping = true;
-            verticalSpeed = -jumpStrength;
-            inBallForm = true;
-        }
+        jumpBufferCounter = jumpBufferTime; // Set jump buffer when jump is pressed
     }
 
     // Updates Sonic's state and interacts with enemies and platforms
@@ -175,6 +181,7 @@ public class Sonic extends Entity {
 
         if (onPlatform) {
             canJump = true;
+            coyoteTimeCounter = coyoteTime; // Reset coyote time when on platform
             if (jumping) {
                 jumping = false;
                 inBallForm = false;
@@ -182,7 +189,22 @@ public class Sonic extends Entity {
                 height = 20;
             }
         } else {
-            canJump = false;
+            if (coyoteTimeCounter > 0) {
+                coyoteTimeCounter--;
+            } else {
+                canJump = false;
+            }
+        }
+
+        // Handle jump buffer
+        if (jumpBufferCounter > 0) {
+            jumpBufferCounter--;
+            if ((canJump || coyoteTimeCounter > 0) && !jumping) {
+                jumping = true;
+                verticalSpeed = -jumpStrength;
+                inBallForm = true;
+                jumpBufferCounter = 0; // Reset jump buffer after successful jump
+            }
         }
 
         for (Enemy enemy : enemies) {
@@ -324,5 +346,7 @@ public class Sonic extends Entity {
         beingKnockedBack = false;
         knockBackTime = 0;
         knockBackDirection = 0;
+        coyoteTimeCounter = 0;
+        jumpBufferCounter = 0;
     }
 }

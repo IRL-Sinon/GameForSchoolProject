@@ -67,7 +67,7 @@ public class LevelThree extends Level {
         sonic = new Sonic(150, 400, 50, 50, lives);  // Position Sonic on the first platform
 
         // Adding enemies with specific positions, sizes, and detection ranges
-        enemies.add(new Enemy(500, 400 - 50, 50, 50, 200, 150));  // Enemy 1
+        enemies.add(new Enemy(500, 400 - 50, 50, 50, 200, 100));  // Enemy 1
         enemies.add(new Enemy(800, 350 - 50, 50, 50, 200, 150));  // Enemy 2
         enemies.add(new Enemy(1200, 300 - 50, 50, 50, 200, 150)); // Enemy 3
         enemies.add(new Enemy(1500, 250 - 50, 50, 50, 200, 150)); // Enemy 4

@@ -1,0 +1,17 @@
+
+§
+java:S1450"_Remove the "currentLevelName" field and declare it as a local variable in the relevant methods.(ä©‹Áüÿÿÿÿ8Ì¿Õñû1J$ff0e4d8b-33a2-423c-b26c-e7dee3776c34
+›
+java:S1450"XRemove the "gameLogic" field and declare it as a local variable in the relevant methods.(şúøÅ8ß¿Õñû1J$c41b3d99-ff6f-4219-a199-2e367d24795b
+r	java:S106b"+Replace this use of System.out by a logger.(¤Ã¸ïüÿÿÿÿ8šÂÕñû1J$9582456b-f821-4534-a2e2-5004afb7b7be
+r	java:S106t"+Replace this use of System.err by a logger.(ÇûÙ˜ùÿÿÿÿ8²ÂÕñû1J$f652df44-d002-45c2-9c12-1a2c9902ce5a
+r	java:S106~"+Replace this use of System.err by a logger.(¡Ï·éüÿÿÿÿ8¶ÂÕñû1J$da97967d-4964-42cd-82b0-be84d6a23ca0
+j	java:S131‘""Add a default case to this switch.( ÂĞÑùÿÿÿÿ8ÚÂÕñû1J$41478b81-6ad9-444d-8380-6be444e6f07e
+d	java:S131¡""Add a default case to this switch.( à×H8éÂÕñû1J$8f0cb3c0-8193-4c70-9416-18a845923a23
+d	java:S131°""Add a default case to this switch.( à×H8óÂÕñû1J$ad96c803-1ca7-4dcb-86c4-9de73a713c4a
+
+java:S1301°"KReplace this "switch" statement by "if" statements to increase readability.( à×H8÷ÂÕñû1J$92417028-fb87-4e84-b3e2-23f39a041ca7
+q
+java:S3398a".Move this method into "LevelSelectionHandler".(Ìêö8ÜÃÕñû1J$f58a8527-61e9-47d5-9b29-5eefe6a93787
+|
+java:S1068"4Remove this unused "currentLevelName" private field.(ä©‹Áüÿÿÿÿ8êÃÕñû1J$bb8ba2fe-8149-4981-8997-c3292803048e

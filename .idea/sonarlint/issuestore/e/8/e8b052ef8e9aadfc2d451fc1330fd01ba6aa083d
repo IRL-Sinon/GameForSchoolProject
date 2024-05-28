@@ -1,0 +1,20 @@
+
+=
+java:S1948"'Make "sonic" transient or serializable.(“­Şô
+D
+java:S1948")Make "enemies" transient or serializable.(˜ºáıÿÿÿÿ
+B
+java:S1948"'Make "lives" transient or serializable.(‰Äğñüÿÿÿÿ
+>
+java:S1948"(Make "camera" transient or serializable.(õ‰°Š
+L
+java:S1948"1Make "backgroundImage" transient or serializable.(×»Êúùÿÿÿÿ
+_
+java:S3252""IUse static access with "javax.swing.WindowConstants" for "EXIT_ON_CLOSE".(¢¡´
+X
+java:S3252#"=Use static access with "java.awt.Frame" for "MAXIMIZED_BOTH".(Ê¤³ñúÿÿÿÿ
+h
+java:S3776L"RRefactor this method to reduce its Cognitive Complexity from 18 to the 15 allowed.(ÈÊ“À
+E	java:S106t"+Replace this use of System.err by a logger.(–ü¿¹øÿÿÿÿ
+F
+java:S1068"+Remove this unused "wasIdle" private field.(û³°Øøÿÿÿÿ

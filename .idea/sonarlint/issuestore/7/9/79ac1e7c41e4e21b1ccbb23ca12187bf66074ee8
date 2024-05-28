@@ -1,0 +1,12 @@
+
+<
+java:S1170"!Make this final field static too.(Á›ÿûÿÿÿÿ
+<
+java:S1170"!Make this final field static too.(ãã‡åüÿÿÿÿ
+E	java:S106g"+Replace this use of System.err by a logger.(ü¶ýüúÿÿÿÿ
+m
+java:S3776{"RRefactor this method to reduce its Cognitive Complexity from 48 to the 15 allowed.(”•‰ûÿÿÿÿ
+b
+java:S1117Ù"FRename "knockBackDirection" which hides the field declared at line 41.( õ‘¸ùÿÿÿÿ
+V
+java:S1161±":Add the "@Override" annotation above this method signature(üó«ûÿÿÿÿ

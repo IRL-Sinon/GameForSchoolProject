@@ -13,6 +13,7 @@ public abstract class Level {
     public abstract Lives getLives();
     public abstract List<Rectangle> getPlatforms();
     public abstract int getLevelEndX();
-    public abstract void reset(); // Add this method
-    public abstract void spawnPlayer(); // Add this method to spawn the player
+    public abstract void reset();
+    public abstract void spawnPlayer();
+    public abstract Image getBackgroundImage();
 }

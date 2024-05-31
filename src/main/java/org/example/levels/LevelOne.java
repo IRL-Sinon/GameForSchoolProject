@@ -5,6 +5,7 @@ import org.example.logic.Lives;
 import org.example.logic.Sonic;
 
 import javax.sound.sampled.*;
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
@@ -18,6 +19,7 @@ public class LevelOne extends Level {
     private List<Rectangle> platforms;
     private int levelEndX;
     private Clip backgroundClip;
+    private Image backgroundImage;
 
     public LevelOne() {
         initializeLevel();
@@ -94,6 +96,14 @@ public class LevelOne extends Level {
 
         // Initialize Sonic at the starting position
         sonic = new Sonic(150, 450, 50, 50, lives);  // Position Sonic on the first platform
+
+        // Load background image
+        URL imgURL = getClass().getClassLoader().getResource("Background.png");
+        if (imgURL != null) {
+            backgroundImage = new ImageIcon(imgURL).getImage();
+        } else {
+            System.err.println("Couldn't find file: Background.png");
+        }
     }
 
     @Override
@@ -132,6 +142,11 @@ public class LevelOne extends Level {
         Rectangle firstPlatform = platforms.get(0);
         sonic.setPosition(firstPlatform.x, firstPlatform.y - 50);
         sonic.resetState();
+    }
+
+    @Override
+    public Image getBackgroundImage() {
+        return backgroundImage;
     }
 
     public void startBackgroundMusic(String filePath) {

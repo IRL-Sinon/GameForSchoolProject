@@ -26,7 +26,7 @@ public class Enemy extends Entity {
         this.detectionRangeX = detectionRangeX;
         this.detectionRangeY = detectionRangeY;
 
-        // Load GIFs for idle and walking animations with set path
+        // Load GIFs for idle and walking animations using getClass and getResource
         this.idleGif = loadAndResizeGif("enemyStanding.gif");
         this.walkingGif = loadAndResizeGif("enemyMoving.gif");
         this.movingLeft = false;

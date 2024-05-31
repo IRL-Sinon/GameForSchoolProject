@@ -2,61 +2,65 @@ package org.example;
 
 import org.example.logic.Sonic;
 import org.example.logic.Enemy;
-import org.example.logic.Lives;
 import org.example.logic.Camera;
+import org.example.logic.Lives;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.AffineTransformOp;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
+import javax.imageio.ImageIO;
 
 class GameGraphics extends JPanel {
-    private Sonic sonic; // Represents the Sonic character
-    private List<Enemy> enemies; // Stores a list of enemies in the game
-    private Lives lives; // Manages the number of lives Sonic has
-    private Timer timer; // Timer for the game loop
-    private boolean wasIdle = true; // Tracks if Sonic was idle
-    private Camera camera; // Manages the camera view
-    private Image backgroundImage; // Background image of the game
-    private JFrame frame; // Main frame of the game window
-    private List<Rectangle> platforms; // List of platforms for Sonic and enemies to walk on
+    private Sonic sonic;
+    private List<Enemy> enemies;
+    private Lives lives;
+    private Timer timer;
+    private Camera camera;
+    private Image backgroundImage;
+    private Image platformImage;
+    private JFrame frame;
+    private List<Rectangle> platforms;
+    private int levelWidth;
+    private int levelHeight;
 
-    // Constructor initializes the game frame
     public GameGraphics() {
         initializeFrame();
+        loadPlatformImage();
     }
 
-    // Initializes the game frame settings
     public void initializeFrame() {
         frame = new JFrame("Project Sonic");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setUndecorated(false);
         frame.setLocationRelativeTo(null);
-        frame.setSize(800, 600);
+        frame.setSize(1920, 1080);
         ImageIcon icon = new ImageIcon("sonic icon.png");
         frame.setIconImage(icon.getImage());
         frame.add(this);
         frame.setVisible(true);
     }
 
-    // Returns the main frame of the game
     public JFrame getFrame() {
         return frame;
     }
 
-    // Sets up the game components
-    public void setupGameComponents(Sonic sonic, List<Enemy> enemies, Lives lives, List<Rectangle> platforms) {
+    public void setupGameComponents(Sonic sonic, List<Enemy> enemies, Lives lives, List<Rectangle> platforms, Image backgroundImage, int levelWidth, int levelHeight) {
         this.sonic = sonic;
         this.enemies = enemies;
         this.lives = lives;
         this.platforms = platforms;
-        this.camera = new Camera(1920, 1080); // Initialize camera with screen dimensions
+        this.backgroundImage = backgroundImage;
+        this.levelWidth = levelWidth;
+        this.levelHeight = levelHeight;
+        this.camera = new Camera(frame.getWidth(), frame.getHeight()); // Initialize camera with screen dimensions
     }
 
-    // Starts the game loop with a timer
     public void startGameLoop(GameLogic gameLogic) {
         if (timer != null) {
             timer.stop();
@@ -71,7 +75,19 @@ class GameGraphics extends JPanel {
         timer.start();
     }
 
-    // Paints the game components on the screen
+    private void loadPlatformImage() {
+        try {
+            URL imageUrl = getClass().getClassLoader().getResource("Floor.png");
+            if (imageUrl != null) {
+                platformImage = ImageIO.read(imageUrl);
+            } else {
+                System.err.println("Platform image not found: Floor.png");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -83,15 +99,35 @@ class GameGraphics extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
-        // Draw the background image
+        // Calculate the scale factors for the background image
+        double scaleX = (double) (levelWidth * 1.5) / backgroundImage.getWidth(null); // Make the background twice as wide as the level
+        double scaleY = (double) (levelHeight ) / backgroundImage.getHeight(null); // Make the background twice as high as the level
+
+        // Adjust the vertical and horizontal position of the background image
+        int backgroundYOffset = -500; // Move the background image up by 500 pixels
+        int backgroundXOffset = -1000; // Move the background image left by 1000 pixels
+
+        // Draw the background image scaled to fit the larger dimensions
         if (backgroundImage != null) {
-            g2d.drawImage(backgroundImage, -offsetX, -offsetY, this);
+            g2d.drawImage(backgroundImage, -offsetX + backgroundXOffset, -offsetY + backgroundYOffset, (int) (backgroundImage.getWidth(null) * scaleX), (int) (backgroundImage.getHeight(null) * scaleY), null);
+        } else {
+            System.err.println("Background image is null");
         }
 
-        // Draw the platforms
-        g2d.setColor(Color.GRAY);
-        for (Rectangle platform : platforms) {
-            g2d.fillRect(platform.x - offsetX, platform.y - offsetY, platform.width, platform.height);
+        // Draw the platforms with the platform image
+        if (platformImage != null) {
+            for (Rectangle platform : platforms) {
+                for (int x = 0; x < platform.width; x += platformImage.getWidth(null)) {
+                    for (int y = 0; y < platform.height; y += platformImage.getHeight(null)) {
+                        g2d.drawImage(platformImage, platform.x - offsetX + x, platform.y - offsetY + y, this);
+                    }
+                }
+            }
+        } else {
+            g2d.setColor(Color.GRAY);
+            for (Rectangle platform : platforms) {
+                g2d.fillRect(platform.x - offsetX, platform.y - offsetY, platform.width, platform.height);
+            }
         }
 
         // Draw Sonic if he is alive and visible
@@ -103,7 +139,7 @@ class GameGraphics extends JPanel {
                 int drawY = sonic.getCoord().getY() - offsetY;
 
                 // Adjust Sonic's y-coordinate to be closer to the bottom of the screen
-                drawY = Math.min(getHeight() - sonic.getHeight() - 150, drawY); // Adjust 150 to position Sonic at the bottom
+                drawY = Math.min(getHeight() - sonic.getHeight() - 150, drawY);
 
                 if (!sonic.isFacingRight()) {
                     AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
@@ -139,7 +175,6 @@ class GameGraphics extends JPanel {
         g2d.drawString("Lives: " + lives.getLives(), 20, 50);
     }
 
-    // Converts an Image to a BufferedImage
     private BufferedImage toBufferedImage(Image img) {
         if (img instanceof BufferedImage) {
             return (BufferedImage) img;
@@ -151,7 +186,6 @@ class GameGraphics extends JPanel {
         return bimage;
     }
 
-    // Returns the list of platforms for collision detection
     public List<Rectangle> getPlatforms() {
         return platforms;
     }

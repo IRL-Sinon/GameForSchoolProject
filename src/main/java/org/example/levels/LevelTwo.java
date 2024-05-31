@@ -5,6 +5,7 @@ import org.example.logic.Lives;
 import org.example.logic.Sonic;
 
 import javax.sound.sampled.*;
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
@@ -18,6 +19,7 @@ public class LevelTwo extends Level {
     private List<Rectangle> platforms;
     private int levelEndX;
     private Clip backgroundClip;
+    private Image backgroundImage;
 
     public LevelTwo() {
         initializeLevel();
@@ -63,7 +65,7 @@ public class LevelTwo extends Level {
         platforms.add(new Rectangle(5200, 100, 300, 50)); // Platform 21
         platforms.add(new Rectangle(5550, 200, 250, 50)); // Platform 22
         platforms.add(new Rectangle(5800, 150, 200, 50)); // Platform 23
-        platforms.add(new Rectangle(6050, 100, 700, 50)); // End platform
+        platforms.add(new Rectangle(6050, 100, 2000, 50)); // End platform
 
         // Initialize Sonic at the starting position
         sonic = new Sonic(150, 300, 50, 50, lives);  // Position Sonic on the first platform
@@ -81,6 +83,13 @@ public class LevelTwo extends Level {
         enemies.add(new Enemy(4750, 150, 50, 50, 250, 100)); // Enemy 10
         enemies.add(new Enemy(5100, 100, 50, 50, 150, 100)); // Enemy 11
 
+        // Load background image
+        URL imgURL = getClass().getClassLoader().getResource("Background.png");
+        if (imgURL != null) {
+            backgroundImage = new ImageIcon(imgURL).getImage();
+        } else {
+            System.err.println("Couldn't find file: Background.png");
+        }
     }
 
     @Override
@@ -119,6 +128,11 @@ public class LevelTwo extends Level {
         Rectangle firstPlatform = platforms.get(0);
         sonic.setPosition(firstPlatform.x, firstPlatform.y - 50);
         sonic.resetState();
+    }
+
+    @Override
+    public Image getBackgroundImage() {
+        return backgroundImage;
     }
 
     public void startBackgroundMusic(String filePath) {
